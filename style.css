@@ -41,19 +41,17 @@ p {
 }
 
 .popup-hide {
-    vertical-align: middle;
     width: 128px;
     height: 200px;
     font-family: Georgia, 'Times New Roman', Times, serif;
-    visibility: collapse;
+    display: none;
 }
 
 .popup-show {
-    vertical-align: middle;
     width: 128px;
     height: 200px;
     font-family: Georgia, 'Times New Roman', Times, serif;
-    visibility: visible;
+    display: block;
 }
 
 .btn-addbook {

@@ -5,36 +5,21 @@ To do:
     - style.css bearbeiten, sodass es bei vielen Büchern einen Zeilenumbruch gibt
 */
 
-loadLib();
-checkButtons1();
-checkButtons2();
+const bookData = getBooks();
+putBooksOnShelf(bookData)
 
-function loadLib () {
+checkButtons1(); // Funktionsname ist nicht aussagekräftig
+checkButtons2(); // Funktionsname ist nicht aussagekräftig
+
+function getBooks () {
+  const bookData = []
   for (let i=0; i<books.length; i++) {
     var xhr = new XMLHttpRequest();
     xhr.open('GET', `https://www.googleapis.com/books/v1/volumes?q=isbn:${books[i].ISBN_13}`, false);
 
     xhr.onreadystatechange = function () {
       if (this.readyState == 4 && this.status == 200) {
-        const newVolume = document.createElement('div');
-        const vol = JSON.parse(this.responseText);
-        if (vol.items[0].volumeInfo.imageLinks) {
-          newVolume.innerHTML = `<img src="${vol.items[0].volumeInfo.imageLinks.thumbnail}"></img>
-          <button class="btn-show" id="btn1-${books[i].ISBN_13}">Mehr Infos...</button>
-          <button class="btn-hide" id="btn2-${books[i].ISBN_13}">Weniger Infos...</button>
-          <p class="popup-hide" id="pop-${books[i].ISBN_13}">${vol.items[0].volumeInfo.authors}<br>-<br>
-          ${vol.items[0].volumeInfo.title}. ${vol.items[0].volumeInfo.subtitle}<br>-<br>${vol.items[0].volumeInfo.publishedDate}</p>`;
-        }
-        else if (vol.items[0].volumeInfo.title) {
-          newVolume.innerHTML = `<p>${vol.items[0].volumeInfo.title}</p><img src="thumbnail_placeholder.jpg"></img>
-          <button class="btn-show" id="btn1-${books[i].ISBN_13}">Mehr Infos...</button>
-          <button class="btn-hide" id="btn2-${books[i].ISBN_13}">Weniger Infos...</button>
-          <p class="popup-hide" id="pop-${books[i].ISBN_13}">${vol.items[0].volumeInfo.authors}<br>-<br>
-          ${vol.items[0].volumeInfo.title}. ${vol.items[0].volumeInfo.subtitle}<br>-<br>${vol.items[0].volumeInfo.publishedDate}</p>`
-        }
-        else {console.log('Error: volume hat weder Titel noch Coverbild')}
-        
-        document.getElementById('bookshelf').appendChild(newVolume);
+        bookData.push(JSON.parse(this.responseText))
       }
     }
 
@@ -44,24 +29,47 @@ function loadLib () {
 
     xhr.send();
   }
+
+  return bookData
+}
+
+function putBooksOnShelf(bookData) {
+  for (const book of bookData) {
+    const newVolume = document.createElement('div');
+    newVolume.innerHTML = createBookHtml(
+      book.thumbnail, 
+      book.title, 
+      book.subtitle, 
+      book.authors,
+      book.publishedDate
+    )  
+    document.getElementById('bookshelf').appendChild(newVolume);
+  }
+}
+
+function createBookHtml(thumbnail, title, subtitle, authors, publishedDate) {
+  let html = ''
+  if (thumbnail) {
+    html = `<img src="${thumbnail}">`
+  } else {
+    html = `<p>${title}</p><img src="thumbnail_placeholder.jpg">`
+  }
+
+  html += `<button class="btn-show">Mehr Infos...</button>
+    <button class="btn-hide">Weniger Infos...</button>
+    <p class="popup-hide">${authors}<br>-<br>
+    ${title}. ${subtitle}<br>-<br>${publishedDate}</p>`
+
+  return html
 }
 
 function checkButtons1 () {
-  const buttons = document.querySelectorAll('.btn-show').length;
+  const buttons = document.querySelectorAll('.btn-show')
 
-  for (let i=0; i<buttons; i++) {
-    document.querySelectorAll('.btn-show')[i].addEventListener('click', function () {
-      if (document.getElementById(`pop-${books[i].ISBN_13}`).className == 'popup-hide' &&
-      document.getElementById(`pop-${books[i].ISBN_13}`).className != 'popup-show') {
-        document.getElementById(`pop-${books[i].ISBN_13}`).className = 'popup-show';
-        document.getElementById(`btn1-${books[i].ISBN_13}`).className = 'btn-hide';
-        document.getElementById(`btn2-${books[i].ISBN_13}`).className = 'btn-show';
-      }
-      if (document.getElementById(`pop-${books[i].ISBN_13}`).className = 'popup-show' &&
-      document.getElementById(`pop-${books[i].ISBN_13}`).className != 'popup-hide') {
-        
-      }
-      else {console.log('Popup Error 1')}
+  for (const button of buttons) {
+    button.addEventListener('click', function () {
+      const hiddenElement = button.parentElement.getElementsByClassName('popup-hide')
+      hiddenElement[0].className = 'popup-show'
     })
   }
 }
@@ -70,12 +78,13 @@ function checkButtons1 () {
 // Wird der Popuptext-classname in checkButtons2 abgerufen, ist er true, nicht popup-show.
 // Innerhalb von checkButtons1 wird der classname aber korrekterweise auf popup-show gesetzt.
 // Habe die if-statement-Bedingung in checkButtons2 jetzt einfach auf classname == 'true' gesetzt.
+// TODO: Funktion umbauen, ähnlich checkButtons1
 function checkButtons2 () {
   const buttons = document.querySelectorAll('.btn-hide').length;
 
   for (let i=0; i<buttons; i++) {
     document.querySelectorAll('.btn-hide', )[i].addEventListener('click', function () {
-      if (document.getElementById(`pop-${books[i].ISBN_13}`).className == 'true') {
+      if (document.getElementById(`pop-${books[i].ISBN_13}`).className == 'popup-show') {
         document.getElementById(`pop-${books[i].ISBN_13}`).className = 'popup-hide';
         document.getElementById(`btn2-${books[i].ISBN_13}`).className = 'btn-hide';
         document.getElementById(`btn1-${books[i].ISBN_13}`).className = 'btn-show';
