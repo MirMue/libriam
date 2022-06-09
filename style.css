@@ -24,23 +24,21 @@ p {
     margin: 0.5rem;
 }
 
-.btn-show {
-    background-color: goldenrod;
+.btn-info {
     font-family: Georgia, 'Times New Roman', Times, serif;
     font-size: small;
     width: 128px;
     margin: 0.2rem;
 }
 
-.btn-hide {
-    background-color: grey;
+.btn-close {
     font-family: Georgia, 'Times New Roman', Times, serif;
     font-size: small;
     width: 128px;
     margin: 0.2rem;
 }
 
-.popup-hide {
+.hidden {
     vertical-align: middle;
     width: 128px;
     height: 200px;
@@ -48,7 +46,7 @@ p {
     visibility: collapse;
 }
 
-.popup-show {
+.visible {
     vertical-align: middle;
     width: 128px;
     height: 200px;
