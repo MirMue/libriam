@@ -6,52 +6,28 @@ body {
     width: 80%;
 }
 
-h1 {
+header {
     margin: 2rem;
 }
 
 .container {
     display: flex;
-    flex-direction: row;
+    flex-flow: row wrap;
+    justify-content: center;
     align-items: flex-end;
+    align-content: flex-start;
+    gap: 10px 20px;
+    padding: 1rem;
 }
 
-p {
-    line-height: 1.5;
-    display: inline-block;
-    vertical-align: middle;
-    width: 128px;
-    margin: 0.5rem;
+.book-button {
+    border: none;
+    background-color: ivory;
 }
 
-.btn-info {
-    font-family: Georgia, 'Times New Roman', Times, serif;
-    font-size: small;
-    width: 128px;
-    margin: 0.2rem;
-}
-
-.btn-close {
-    font-family: Georgia, 'Times New Roman', Times, serif;
-    font-size: small;
-    width: 128px;
-    margin: 0.2rem;
-}
-
-.hidden {
-    vertical-align: middle;
-    width: 128px;
-    height: 200px;
-    font-family: Georgia, 'Times New Roman', Times, serif;
-    visibility: collapse;
-}
-
-.visible {
-    vertical-align: middle;
-    width: 128px;
-    height: 200px;
-    font-family: Georgia, 'Times New Roman', Times, serif;
-    visibility: visible;
+.bookcover {
+    width: 146px;
+    height: 220px;
 }
 
 .btn-addbook {
@@ -69,3 +45,64 @@ p {
     width: 25%;
 }
 
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    transition: 200ms ease-in-out;
+    border: 1px solid black;
+    border-radius: 10px;
+    z-index: 10;
+    background-color: white;
+    width: 500px;
+    max-width: 80%;
+}
+
+.modal.active {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.modal-header {
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid black;
+}
+
+.modal-header .modal-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+.modal-header .modal-button {
+    cursor: pointer;
+    border: none;
+    outline: none;
+    background: none;
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+.modal-body {
+    padding: 10px 15px;
+}
+
+#overlay {
+    position: fixed;
+    opacity: 0;
+    transition: 200ms ease-in-out;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /* Das .5 macht es 50% transparent: */
+    background-color: rgba(0, 0, 0, .5);
+    pointer-events: none;
+}
+
+#overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
