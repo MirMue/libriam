@@ -29,4 +29,19 @@ var books = [
         ISBN_10: "3641255228",
         ISBN_13: "9783641255220",
     },
+    {
+        title: "JavaScript and jQuery",
+        ISBN_10: "1118531647",
+        ISBN_13: "9781118531648",
+    },
+    {
+        title: "Meister und Margarita",
+        ISBN_10: "3423143010",
+        ISBN_13: "9783423143011",
+    },
+    {
+        title: "American Gods",
+        ISBN_10: "3847905872",
+        ISBN_13: "9783847905875",
+    },
   ];

@@ -1,28 +1,72 @@
 body {
     text-align: center;
     font-family: Georgia, 'Times New Roman', Times, serif;
-    background-color: ivory;
+    background-color: white;
     margin: 0 auto;
     width: 80%;
 }
 
 header {
-    margin: 2rem;
+    padding: 5px;
+}
+
+.loader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5rem;
+}
+
+.loader > span {
+    display: inline-block;
+    background-color: rgb(36, 103, 36);
+    width: 0px;
+    height: 0px;
+    border-radius: 50%;
+    margin: 0 10px;
+    animation: pulsate 0.75s infinite alternate;
+}
+
+.loader > span:nth-child(2) {
+    background-color: rgb(78, 3, 78);
+    animation-delay: 0.25s;
+}
+
+.loader > span:nth-child(3) {
+    background-color: rgb(255, 218, 54);
+    animation-delay: 0.5s;
+}
+
+@keyframes pulsate {
+    to {
+        width: 25px;
+        height: 25px;
+    }
 }
 
 .container {
-    display: flex;
+    display: none;
+    opacity: 0;
     flex-flow: row wrap;
     justify-content: center;
     align-items: flex-end;
     align-content: flex-start;
     gap: 10px 20px;
     padding: 1rem;
+    transition: opacity 1s ease-in;
+}
+
+.book:hover::before {
+    content: 'Mehr...';
+    position: absolute;
+    background-color: black;
+    color: white;
+    padding: 5px;
 }
 
 .book-button {
     border: none;
-    background-color: ivory;
+    background-color: white;
 }
 
 .bookcover {
@@ -30,7 +74,18 @@ header {
     height: 220px;
 }
 
-.btn-addbook {
+.bookcover.empty {
+    border: solid 1px grey;
+    background-color: white;
+}
+
+.bookcover.empty p {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: medium;
+
+}
+
+#btn-addbook {
     padding: 0.5rem 0.8rem;
     background-color: goldenrod;
     font-size: medium;
@@ -87,6 +142,10 @@ header {
 
 .modal-body {
     padding: 10px 15px;
+}
+
+form {
+    padding: 2rem;
 }
 
 #overlay {

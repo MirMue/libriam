@@ -1,8 +1,35 @@
 getBooks()
   .then((response) => fillBookshelf(response))
+  .then((response) => loaderBookshelf(response))
   .then((response) => initButtons(response));
 
-  // Get data from Google Books and fill bookshelf with book elements:
+
+// Loading animation for bookshelf:
+
+let loader = document.querySelector('.loader');
+let shelf = document.querySelector('.container');
+
+function loaderBookshelf () {
+  loader.style.opacity = 0;
+  loader.style.display = 'none';
+  shelf.style.display = 'flex';
+  setTimeout(() => (shelf.style.opacity = 1), 50)
+}
+
+// Add new book to books.js:
+
+// document.addEventListener('DOMContentLoaded', () => {
+//   document.querySelector('#btn-addbook').addEventListener('click', addBook);
+// })
+
+// function addBook (e) {
+//   e.preventDefault();
+//   console.log('addBookToFile funzt');
+//   let ISBN_13 = {ISBN_13 : document.querySelector('#addbookisbn').value};
+//   console.log(ISBN_13)
+// }
+
+// Get data from Google Books and fill bookshelf with book elements:
 
 async function getBooks () {
   const bookData = [];
@@ -36,11 +63,10 @@ function createBookHtml (title, subtitle, authors, publishedDate, imageLinks, vo
   let bookCover = '';
   const publishedYear = publishedDate.split('-')[0]
 
-  // thumbnail_placeholder.jpg soll noch durch canvas mit Buchtitel ersetzt werden
   if (imageLinks) {
     bookCover += `<img class="bookcover" src="${imageLinks.thumbnail}">`
   } else {
-    bookCover += `<img class="bookcover" src="thumbnail_placeholder.jpg">`
+    bookCover += `<div class="bookcover empty"><p>${authors}</p><p>${title}</p><p style="font-size: small">(Kein Buchcover vorhanden)</p></div>`
   }
 
   if (subtitle == undefined) {
