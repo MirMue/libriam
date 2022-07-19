@@ -1,33 +1,52 @@
+// Initialize / load bookshelf:
 getBooks()
   .then((response) => fillBookshelf(response))
-  .then((response) => loaderBookshelf(response))
+  .then((response) => loaderBookshelfOff(response))
   .then((response) => initButtons(response));
+
+
+// Initialize variables for often used DOM elements:
+const loader = document.querySelector('.loader');
+const bookshelf = document.querySelector('.container');
 
 
 // Loading animation for bookshelf:
 
-let loader = document.querySelector('.loader');
-let shelf = document.querySelector('.container');
-
-function loaderBookshelf () {
+function loaderBookshelfOff () {
   loader.style.opacity = 0;
   loader.style.display = 'none';
-  shelf.style.display = 'flex';
-  setTimeout(() => (shelf.style.opacity = 1), 50)
+  bookshelf.style.display = 'flex';
+  setTimeout(() => (bookshelf.style.opacity = 1), 50);
 }
 
-// Add new book to books.js:
+function loaderBookshelfOn () {
+  loader.style.opacity = 1;
+  loader.style.display = 'flex';
+  bookshelf.style.display = 'none';
+  bookshelf.style.opacity = 0;
+}
 
-// document.addEventListener('DOMContentLoaded', () => {
-//   document.querySelector('#btn-addbook').addEventListener('click', addBook);
-// })
 
-// function addBook (e) {
-//   e.preventDefault();
-//   console.log('addBookToFile funzt');
-//   let ISBN_13 = {ISBN_13 : document.querySelector('#addbookisbn').value};
-//   console.log(ISBN_13)
-// }
+// Add new book to bookshelf:
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelector('#btn-addbook').addEventListener('click', addNewBook);
+})
+
+function addNewBook (e) {
+  e.preventDefault();
+  loaderBookshelfOn();
+  let ISBN_13 = {ISBN_13 : document.querySelector('#addbookisbn').value};
+  bookshelf.innerHTML = '';
+  books.push(ISBN_13);
+  getBooks()
+    .then((response) => fillBookshelf(response))
+    .then((response) => loaderBookshelfOff(response))
+    .then((response) => initButtons(response));
+
+    document.querySelector('#addbookisbn').value = '';
+}
+
 
 // Get data from Google Books and fill bookshelf with book elements:
 
@@ -54,7 +73,14 @@ function fillBookshelf(bookData) {
       book.items[0].id
     );
 
-    document.getElementById('bookshelf').appendChild(newVolume)
+    bookshelf.appendChild(newVolume)
+    
+    // Adds span element as a seperator between rows of books.
+    // Problem: Depends on each row having exactly 6 books in them.
+    if (bookshelf.querySelectorAll('.book').length%6 === 0) {
+      const board = document.createElement('span');
+      bookshelf.appendChild(board);
+    }
   }
 }
 
@@ -81,6 +107,7 @@ function createBookHtml (title, subtitle, authors, publishedDate, imageLinks, vo
 
   return html
 }
+
 
 // Open modals by clicking on bookcovers:
 

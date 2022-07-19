@@ -44,4 +44,34 @@ var books = [
         ISBN_10: "3847905872",
         ISBN_13: "9783847905875",
     },
+    {
+        title: "Will Save The Galaxy For Food",
+        ISBN_10: "1506701655",
+        ISBN_13: "9781506701653",
+    },
+    {
+        title: "Monsieur Ibrahim und die Blumen des Koran",
+        ISBN_10: "3104013632",
+        ISBN_13: "9783104013633",
+    },
+    {
+        title: "Tyll",
+        ISBN_10: "3498035673",
+        ISBN_13: "9783498035679",
+    },
+    {
+        title: "Der Mythos des Sisyphos",
+        ISBN_10: "3644026610",
+        ISBN_13: "9783644026612",
+    },
+    {
+        title: "Der sammelnde Professor",
+        ISBN_10: "3515127291",
+        ISBN_13: "9783515127295",
+    },
+    {
+        title: "Der Graf von Monte Christo",
+        ISBN_10: "3423139552",
+        ISBN_13: "9783423139557",
+    },
   ];

@@ -85,6 +85,13 @@ header {
 
 }
 
+.container > span {
+    width: 90%;
+    height: 1rem;
+    background-image: linear-gradient(rgba(88, 88, 88, 0.5), rgba(88, 88, 88, 0));
+    margin-bottom: 1rem;
+}
+
 #btn-addbook {
     padding: 0.5rem 0.8rem;
     background-color: goldenrod;
