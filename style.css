@@ -4,6 +4,7 @@ body {
     background-color: white;
     margin: 0 auto;
     width: 80%;
+    opacity: 1;
 }
 
 header {
@@ -45,7 +46,7 @@ header {
 }
 
 .container {
-    display: none;
+    display: flex;
     opacity: 0;
     flex-flow: row wrap;
     justify-content: center;
@@ -163,7 +164,6 @@ form {
     left: 0;
     right: 0;
     bottom: 0;
-    /* Das .5 macht es 50% transparent: */
     background-color: rgba(0, 0, 0, .5);
     pointer-events: none;
 }
