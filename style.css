@@ -13,6 +13,7 @@ header {
 
 .loader {
     display: flex;
+    height: 26px;
     justify-content: center;
     align-items: center;
     padding: 5rem;
@@ -20,22 +21,22 @@ header {
 
 .loader > span {
     display: inline-block;
-    background-color: rgb(36, 103, 36);
+    background-color: lightgray;
     width: 0px;
     height: 0px;
     border-radius: 50%;
     margin: 0 10px;
-    animation: pulsate 0.75s infinite alternate;
+    animation: pulsate 1s infinite alternate;
 }
 
 .loader > span:nth-child(2) {
-    background-color: rgb(78, 3, 78);
+    background-color: darkgray;
     animation-delay: 0.25s;
 }
 
 .loader > span:nth-child(3) {
-    background-color: rgb(255, 218, 54);
-    animation-delay: 0.5s;
+    background-color: gray;
+    animation-delay: 0.50s;
 }
 
 @keyframes pulsate {
@@ -91,6 +92,10 @@ header {
     height: 1rem;
     background-image: linear-gradient(rgba(88, 88, 88, 0.5), rgba(88, 88, 88, 0));
     margin-bottom: 1rem;
+}
+
+form {
+    padding: 2rem;
 }
 
 #btn-addbook {
@@ -150,10 +155,6 @@ header {
 
 .modal-body {
     padding: 10px 15px;
-}
-
-form {
-    padding: 2rem;
 }
 
 #overlay {

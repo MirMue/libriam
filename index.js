@@ -6,41 +6,53 @@ const path = require('path');
 const PORT = process.env.PORT || 3000;
 
 const server = http.createServer((req, res) => {
-    if (req.url === '/') {
-        fs.readFile(path.join(__dirname, 'index.html'), (error, data) => {
-            if (error) {
-                res.writeHead(404);
-                res.write('Error: File Not Found');
-            }
-            else {
-                res.writeHead(200, { 'Content-Type': 'text/html' });
-                res.end(data);
-            }
-    })}
-    if (req.url === '/about') {
-        fs.readFile(path.join(__dirname, 'about.html'), (error, data) => {
-            if (error) {
-                res.writeHead(404);
-                res.write('Error: File Not Found');
-            }
-            else {
-                res.writeHead(200, { 'Content-Type': 'text/html' });
-                res.end(data);
-            }
-    })
-    }
+    let filePath = path.join(
+        __dirname,
+        req.url == '/' ? 'index.html' : `${req.url}.html`);
+    
     if (req.url === '/books') {
-        fs.readFile(path.join(__dirname, 'books.js'), (error, data) => {
-            if (error) {
-                res.writeHead(404);
-                res.write('Error: File Not Found');
+        filePath = path.join(__dirname, 'books.js')
+    }
+    
+    let extname = path.extname(filePath);
+
+    let contentType = 'text/html';
+
+    switch (extname) {
+        case '.html':
+            contentType = 'text/html';
+            break;
+        case '.js':
+            contentType = 'text/javascript';
+            break;
+        case '.css':
+            contentType = 'text/css';
+            break;
+        case '.json':
+            contentType = 'application/json';
+            break;
+        case '.png':
+            contentType = 'image/png';
+            break;
+        case '.jpg':
+            contentType = 'image/jpg';
+            break;
+    }
+
+    fs.readFile(filePath, (error, data) => {
+        if (error) {
+            if(error.code == 'ENOENT') {
+                console.log('Page not found: ', error.code)
             }
             else {
-                res.writeHead(200, { 'Content-Type': 'text/javascript' });
-                res.end(data.toString())
+                console.log('Server Error: ', error.code)
             }
-        })
-    }
+        }
+        else {
+            res.writeHead(200, { 'Content-Type': contentType});
+            res.end(data, 'utf8');
+        }
+    })
 })
 
 server.listen(PORT, (error) => {
