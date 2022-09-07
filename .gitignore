@@ -2,4 +2,6 @@ bin.txt
 books_test.json
 bin
 node_modules
-books.json
+books copy.json
+about.html
+bookroutes.js

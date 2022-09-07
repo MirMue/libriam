@@ -71,6 +71,15 @@ header {
     background-color: white;
 }
 
+.btn-results {
+    padding: 0.5rem 0.8rem;
+    background-color: black;
+    color: white;
+    font-size: smaller;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    width: 146px;
+}
+
 .bookcover {
     width: 146px;
     height: 220px;
@@ -94,11 +103,15 @@ header {
     margin-bottom: 1rem;
 }
 
-form {
-    padding: 2rem;
+.form-main {
+    padding: 1rem;
 }
 
-#btn-addbook {
+.form-results {
+    padding: 0rem;
+}
+
+.btn-addbook {
     padding: 0.5rem 0.8rem;
     background-color: goldenrod;
     font-size: medium;
@@ -157,7 +170,7 @@ form {
     padding: 10px 15px;
 }
 
-#overlay {
+.overlay {
     position: fixed;
     opacity: 0;
     transition: 200ms ease-in-out;
@@ -169,7 +182,19 @@ form {
     pointer-events: none;
 }
 
-#overlay.active {
+.overlay.active {
     opacity: 1;
     pointer-events: all;
+}
+
+#search-results {
+    display: flex;
+    opacity: 1;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-items: flex-end;
+    align-content: flex-start;
+    gap: 10px 20px;
+    padding: 1rem;
+    transition: opacity 1s ease-in;
 }
