@@ -80,6 +80,24 @@ header {
     width: 146px;
 }
 
+.btn-delete {
+    padding: 0.5rem 0.8rem;
+    background-color: black;
+    color: white;
+    font-size: smaller;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    width: 146px;
+}
+
+.btn-delete-book {
+    padding: 0.5rem 0.8rem;
+    background-color: black;
+    color: white;
+    font-size: smaller;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    width: 146px;
+}
+
 .bookcover {
     width: 146px;
     height: 220px;
@@ -108,7 +126,19 @@ header {
 }
 
 .form-results {
+    display: block;
     padding: 0rem;
+}
+
+.form-delete {
+    display: block;
+    padding: 0rem;
+}
+
+.input-inv {
+    opacity: 0;
+    display: none;
+    width: 0px;
 }
 
 .btn-addbook {
@@ -140,7 +170,25 @@ header {
     max-width: 80%;
 }
 
+.modal-delete {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    transition: 200ms ease-in-out;
+    border: 1px solid black;
+    border-radius: 10px;
+    z-index: 10;
+    background-color: white;
+    width: 500px;
+    max-width: 80%;
+}
+
 .modal.active {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.modal-delete.active {
     transform: translate(-50%, -50%) scale(1);
 }
 
