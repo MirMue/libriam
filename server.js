@@ -36,25 +36,34 @@ app.get('/books', (request, response) => {
 
 // Saves book in books.json
 app.post('/addtolibrary', (request, response) => {
-  // Adds book from search results to "books"-array
-  books.push(request.body)
-
-  // Stringifies book data for writeFile-method
-  const booksString = JSON.stringify(books, null, 2)
-
-  // Saves book data in book.json file
-  fs.writeFile('./books.json', booksString, (error) => {
-    if (error) {
-      console.log('Error: ', error)
-      response.redirect('/searchpage');
+  // Checks wether new book is already saved in library
+  let res = {status : 'new book saved'};
+  for (let i=0; i<books.length; i++) {
+    if (books[i].id === request.body.id) {
+      res.status = 'refused to save doublet'
     }
-    console.log('Added new book to books.json');
-  })
+  }
 
-  // Diese response wird eigentlich nicht gebraucht
-  // Gibt es einen Weg, den Vorgang anderweitig zu beenden?
+  if (res.status === 'new book saved') {
+    // Adds book from search results to "books"-array
+    books.push(request.body)
+
+    // Stringifies book data for writeFile-method
+    const booksString = JSON.stringify(books, null, 2)
+
+    // Saves book data in book.json file
+    fs.writeFile('./books.json', booksString, (error) => {
+      if (error) {
+        console.log('Error: ', error)
+        response.redirect('/searchpage');
+      }
+      console.log('Added new book to books.json');
+    })
+  }
+
+  // Sends response to libriam.js
   response.header({'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'})
-  response.send(books)
+  response.send(res)
 })
 
 // Deletes book from books.json

@@ -223,7 +223,6 @@ async function requestDeletion (event) {
 
   // Wird die response überhaupt gebraucht?
   const data = await response.json();
-  console.log('Buch gelöscht. Neue books.json: ', data);
 
   // Redirects user to index.html
   document.location = 'file:///C:/Users/miria/Documents/Webdev/libriam/public/index.html'
@@ -238,6 +237,10 @@ function initSearch () {
 // Takes user input from searchpage.html and searches for books via google API
 async function searchBooks (e) {
   e.preventDefault(e)
+
+  // Activates loading animation
+  loaderBookshelfOn();
+
   // Gets user input from form on searchpage.html
   const userInput = document.querySelector('#searchkeyword').value;
 
@@ -316,12 +319,29 @@ async function requestSave (event) {
     body: JSON.stringify(newBook),
   });
 
-  // Wird die response überhaupt gebraucht?
+  // Parses response from server
   const data = await response.json();
-  console.log('Buch gespeichert. Neue books.json: ', data);
 
-  // Redirects user to index.html
-  document.location = 'file:///C:/Users/miria/Documents/Webdev/libriam/public/index.html'
+  // Checks wether response confirms save process
+  // or refused due to new book already being in the library
+  // If save was refused, prompts the user to choose wether to return to library
+  // or continue the search
+  const message = 'Dieses Buch ist bereits in deiner Bibliothek vorhanden!\nWähle "OK" um zur Bibliothek zurückzukehren\nWähle "Abbrechen" um die Suche fortzusetzen'
+  if (data.status === 'refused to save doublet') {
+    if (confirm(message)) {
+      document.location = 'file:///C:/Users/miria/Documents/Webdev/libriam/public/index.html'
+      return
+    }
+    else {
+      searchResults = [];
+      document.location = 'file:///C:/Users/miria/Documents/Webdev/libriam/public/searchpage.html'
+      return
+    }
+  }
+  if (data.status === 'new book saved') {
+    document.location = 'file:///C:/Users/miria/Documents/Webdev/libriam/public/index.html'
+    return
+  }
 }
 
 // Handles modal events
