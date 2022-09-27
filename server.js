@@ -1,7 +1,6 @@
 // To do:
 //    - Ordnerstruktur des Projekt ändern
 //    - body-parser, den ich manuell installiert hatte, aus package.json entfernen?
-//    - sicherstellen, dass nicht zwei mal dasselbe Buch gespeichert werden kann
 //    - style.css aufräumen und html-Elemente auf unnötige Attribute überprüfen
 
 const path = require('path');
