@@ -1,6 +1,7 @@
 initIndex();
 
 async function initIndex () {
-    await fillBookshelf();
+    const bookData = await getBooks()
+    await fillBookshelf(bookData);
     initButtons();
 }

@@ -29,7 +29,6 @@ app.use(cors({
 
 // Gets all books
 app.get('/books', (request, response) => {
-  // response.header({'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'})
   response.send(books)
 })
 
@@ -90,7 +89,5 @@ app.post('/deletebook', (request, response) => {
     console.log('Deleted book from books.json: ', deletedBook);
   })
 
-  // Sends response that deletion was successfull
-  response.header({'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'})
-  response.send({status: 'deletion successful'})
+  response.send()
 })

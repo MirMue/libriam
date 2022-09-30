@@ -41,7 +41,7 @@ function initSearch () {
     searchResults = [...resultsArray];
   
     // Puts search results on page
-    fillBookshelf();
+    fillBookshelf(searchResults);
     // Initializes save buttons and modal buttons for search results on page
     initSaveButton();
     initButtons();

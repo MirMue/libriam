@@ -1,6 +1,11 @@
-fillBookshelf()
-    .then(initButtons)
-    .then(initDeleteButtons);
+initEditlibrary();
+
+async function initEditlibrary () {
+    const bookData = await getBooks();
+    await fillBookshelf(bookData);
+    initButtons();
+    initDeleteButtons();
+}
 
 // Initializes delete buttons for editlibrary.html
 function initDeleteButtons () {
@@ -26,10 +31,13 @@ async function requestDeletion (event) {
         body: JSON.stringify(deleteBookId),
     });
 
-    // Wird die response überhaupt gebraucht?
-    const data = await response.json();
-    if (data.status === 'deletion successful') {
+    // Checks wether response.ok is true
+    if (response.ok) {        
         document.querySelector('#editor-bookshelf').innerHTML = 
         '<h2 style="color:grey">Buch gelöscht!</h2>'
+    }
+    // Werde mich noch informieren, wie man gute Errormeldungen schreibt:
+    else {
+        console.log(`Error: response.ok = ${response.ok}, response.status: ${response.status}`)
     }
 }

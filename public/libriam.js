@@ -17,16 +17,10 @@ async function getBooks () {
 }
 
 // Fill bookshelf container with book elements
-async function fillBookshelf() {
-  // Gets object array of book data (title, authors, thumbnail link etc.)
-  let bookData = [];
-  if (document.querySelector('#form-search')) {
-    bookData = searchResults;
-  }
-  else {bookData = await getBooks()}
+async function fillBookshelf(bookData) {
   
   // Puts placeholder on page if library is empty
-  if (bookData.length === 0 && document.querySelector('#bookshelf')) {
+  if (bookData.length === 0) {
     let newVolume = document.createElement('div');
     newVolume.innerHTML = '<h2 style="color:gray">Keine Bücher vorhanden...</h2>';
     bookshelf.appendChild(newVolume)
@@ -59,6 +53,7 @@ async function fillBookshelf() {
 
 // Creates html book element
 // Html in JS ist nicht so gut :D
+// Nicht mit "if (document.querySelector('#bookshelf'))" o.ä. arbeiten
 function createBookHtml (title, subtitle, authors, publishedDate, imageLinks, volumeId) {
   // Checks for subtitle, uses placeholder if there is none
   let subttl = '';
