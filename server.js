@@ -29,7 +29,6 @@ app.use(cors({
 
 // Gets all books
 app.get('/books', (request, response) => {
-  response.header({'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'})
   response.send(books)
 })
 
@@ -90,7 +89,5 @@ app.post('/deletebook', (request, response) => {
     console.log('Deleted book from books.json: ', deletedBook);
   })
 
-  // Wird die response überhaupt gebraucht? Wenn nicht, beendet man die Funktion dann richtig?
-  response.header({'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'})
-  response.send(books)
+  response.send()
 })
