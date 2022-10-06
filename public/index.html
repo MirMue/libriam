@@ -14,7 +14,7 @@
     <header>
         <img id="libriam-logo" src="libriam_logo_v3.png">
     </header>
-    <h2 style="color:gray">Deine Bibliothek</h2>
+    <h2>Deine Bibliothek</h2>
     <div class="loader">
         <span></span>
         <span></span>
@@ -24,5 +24,17 @@
     <a style="padding: 1rem;" href="searchpage.html">Zur Büchersuche</a>
     <a style="padding: 1rem;" href="editlibrary.html">Bibliothek bearbeiten</a>
     <div class="overlay"></div>
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-title">Buchinfos</div>
+            <button class="modal-close-button">&times;</button>
+        </div>
+        <div class="modal-body">
+            <span id="authors">[Autor unbekannt]</span><br>
+            <span id="title">[Titel unbekannt]</span><br>
+            <span id="subtitle">-</span><br>
+            <span id="published-date">[Jahr unbekannt]</span>
+        </div>
+    </div>
 </body>
 </html>

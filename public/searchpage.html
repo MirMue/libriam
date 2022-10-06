@@ -15,13 +15,9 @@
         <img id="libriam-logo" src="libriam_logo_v3.png">
     </header>
     <h1 style="color:gray">Büchersuche</h1>
-    <!-- <form action="/search" method="post" id="form-search" class="form-main">
-        <input type="text" placeholder="Titel, Autor, Schlagworte..." name="keyword" class="input-addbook" id="searchkeyword">
-        <input type="submit" value="Bücher suchen" class="btn-addbook">
-    </form> -->
-    <form id="form-search" class="form-main">
-        <input type="text" placeholder="Titel, Autor, Schlagworte..." name="keyword" class="input-addbook" id="searchkeyword">
-        <button type="submit" class="btn-addbook" id="btn-search">Suchen</button>
+    <form class="form-main" id="form-search">
+        <input type="text" placeholder="Titel, Autor, Schlagworte..." name="keyword" class="input-search" id="searchkeyword">
+        <button type="submit" class="btn-search" id="btn-search">Suchen</button>
     </form>
     <div class="loader" style="display:none; opacity:0">
         <span></span>
@@ -29,9 +25,24 @@
         <span></span>
     </div>
     <div id="results-text"></div>
-    <div class="container" id="search-results"></div>
+    <div class="container" id="bookshelf"></div>
     <div id="no-results"></div>
     <a style="padding: 1rem;" href="index.html">Zurück zur Bibliothek</a>
     <div class="overlay"></div>
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-title">Buchinfos</div>
+            <button class="modal-close-button">&times;</button>
+        </div>
+        <div class="modal-body">
+            <span id="authors">[Autor unbekannt]</span><br>
+            <span id="title">[Titel unbekannt]</span><br>
+            <span id="subtitle">-</span><br>
+            <span id="published-date">[Jahr unbekannt]</span>
+            <form>
+                <input type="button" class="btn-in-modal" value="Speichern"/>
+            </form>
+        </div>
+    </div>
 </body> 
 </html>

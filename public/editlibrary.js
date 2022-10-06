@@ -4,21 +4,27 @@ async function initEditlibrary () {
     const bookData = await getBooks();
     await fillBookshelf(bookData);
     initButtons();
-    initDeleteButtons();
+    initDeleteButton();
 }
 
-// Initializes delete buttons for editlibrary.html
-function initDeleteButtons () {
-    const deleteButtons = document.querySelectorAll('.btn-delete');
-  
-    deleteButtons.forEach(button => {
-      button.addEventListener('click', requestDeletion)
+// Sets id of delete button inside modal to same value as clicked bookcover
+// (id will be used in requestDeletion() later)
+function initDeleteButton () {
+    const openModalButtons = document.querySelectorAll('.btn-book');
+    const deleteButton = document.querySelector('.btn-in-modal');
+    
+    openModalButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            deleteButton.setAttribute('id', `${button.id}`);
+        })
     })
+
+    deleteButton.addEventListener('click', requestDeletion)
   }
   
 // Sends delete request to server
 async function requestDeletion (event) {
-    // Gets id from clicked "delete" button above the book
+    // Gets id from clicked delete button above the book
     const deleteBookId = {id: event.target.id};
 
     // Sends post request to server with book id as request body
@@ -31,10 +37,12 @@ async function requestDeletion (event) {
         body: JSON.stringify(deleteBookId),
     });
 
+    closeModal();
+
     // Checks wether response.ok is true
     if (response.ok) {        
-        document.querySelector('#editor-bookshelf').innerHTML = 
-        '<h2 style="color:grey">Buch gelöscht!</h2>'
+        document.querySelector('#bookshelf').innerHTML = 
+        '<h2>Buch gelöscht!</h2>';
     }
     // Werde mich noch informieren, wie man gute Errormeldungen schreibt:
     else {

@@ -1,14 +1,3 @@
-// To do:
-//    - Nur ein modal, separat von buchelement, intern in elemente für autor, titel etc. unterteilen,
-//      mit innerHTML füllen (möglichst wenig html in js)
-
-// Initializes variables:
-const loader = document.querySelector('.loader');
-// variable ändern, id verwenden:
-const bookshelf = document.querySelector('.container');
-const booksOnShelf = bookshelf.querySelectorAll('.book');
-const overlay = document.querySelector('.overlay');
-
 // Gets book data from local file book.json
 async function getBooks () {
   const response = await fetch('http://localhost:3000/books');
@@ -16,142 +5,72 @@ async function getBooks () {
   return bookData
 }
 
-// Fill bookshelf container with book elements
+// Fills bookshelf container with book elements
 async function fillBookshelf(bookData) {
   
   // Puts placeholder on page if library is empty
   if (bookData.length === 0) {
     let newVolume = document.createElement('div');
-    newVolume.innerHTML = '<h2 style="color:gray">Keine Bücher vorhanden...</h2>';
-    bookshelf.appendChild(newVolume)
+    newVolume.innerHTML = '<h2>Keine Bücher vorhanden...</h2>';
+    document.querySelector('#bookshelf').appendChild(newVolume)
   }
-  // Puts book-html-elements on page
+  // Puts book elements on page
   else {
     for (const book of bookData) {
       let newVolume = document.createElement('div');
-      newVolume.innerHTML = createBookHtml(
-        book.title,
-        book.subtitle,
-        book.authors,
-        book.publishedDate,
-        book.imageLinks,
-        book.id
-      );
-      bookshelf.appendChild(newVolume)
+      newVolume.innerHTML = createBookHtml(book);
+      document.querySelector('#bookshelf').appendChild(newVolume)
     }
   }
-    
-  // Adds span element as a seperator between rows of books.
-  // Problem: Depends on each row having exactly 6 books in them.
-  // if (booksOnShelf.length%6 === 0 && booksOnShelf.length > 0) {
-  //   const board = document.createElement('span');
-  //   bookshelf.appendChild(board);
-  // }
 
   loaderBookshelfOff();
 }
 
-// Creates html book element
-// Html in JS ist nicht so gut :D
-// Nicht mit "if (document.querySelector('#bookshelf'))" o.ä. arbeiten
-function createBookHtml (title, subtitle, authors, publishedDate, imageLinks, volumeId) {
-  // Checks for subtitle, uses placeholder if there is none
-  let subttl = '';
-  if (subtitle) {
-    subttl = subtitle
-  } else {subttl = '-'}
-  
-  // Checks for publishedDate, uses placeholder if there is none
-  let publishedYear = '';
-  if (publishedDate) {
-    publishedYear = publishedDate.split('-')[0]
-  } else {publishedYear = '[Jahr unbekannt]'}
+// Creates html element for a book
+function createBookHtml (book) {
 
   // Checks for thumbnail, uses placeholder if there is none
   let bookCover = '';
-  if (imageLinks) {
-    bookCover = `<img class="bookcover" src="${imageLinks.thumbnail}">`
-  } else {
-    bookCover = `<div class="bookcover empty"><p>${authors}</p><p>${title}</p><p style="font-size: small">(Kein Buchcover vorhanden)</p></div>`
-  }
+  book.imageLinks ? bookCover = `<img class="bookcover" src="${book.imageLinks.thumbnail}">` :
+  bookCover = `<div class="bookcover empty">
+    <p>${book.authors ? book.authors : '[Autor unbekannt]'}</p>
+    <p>${book.title ? book.title : '[Titel unbekannt]'}</p>
+    <p style="font-size: small">(Kein Buchcover vorhanden)</p>
+    </div>`;
 
   // Creates html element of a book
   let html = '';
-  // for index page: book cover that functions as a button for opening modal with book information
-  if (document.querySelector('#bookshelf')) {
-    html += `<div class="book">
-    <button class="book-button" data-modal-target="#modal-${volumeId}">${bookCover}</button>
-    <div class="modal" id="modal-${volumeId}">
-    <div class="modal-header"><div class="modal-title">Buchinfos</div>
-    <button data-close-button class="modal-button">&times;</button></div>
-    <div class="modal-body">${authors}<br>${title}<br>${subttl}<br>${publishedYear}</div></div>
-    </div>`
-  }
-  // for edit library page: same as index page, but adds "delete" button
-  if (document.querySelector('#editor-bookshelf')) {
-    html += `<form id="form-delete-${volumeId}">
-    <input value="${volumeId}" name="bookId" class="input-inv"/>
-    <input class="btn-delete" type="button" id="${volumeId}" value="Löschen"/>
-    </form>
-    <div class="book">
-    <button class="book-button" data-modal-target="#modal-${volumeId}">${bookCover}</button>
-    <div class="modal" id="modal-${volumeId}">
-    <div class="modal-header"><div class="modal-title">Buchinfos</div>
-    <button data-close-button class="modal-button">&times;</button></div>
-    <div class="modal-body">${authors}<br>${title}<br>${subttl}<br>${publishedYear}</div></div>
-    </div>`
-  }
-  // for search page: same as index page, but adds "save" button
-  if (document.querySelector('#form-search')) {
-    html += `<form>
-    <input type="submit" class="input-inv" value="${volumeId}" name="bookId"/>
-    <input type="button" class="btn-results" id="${volumeId}" value="Speichern"/>
-    </form>
-    <div class="book">
-    <button class="book-button" data-modal-target="#modal-${volumeId}">${bookCover}</button>
-    <div class="modal" id="modal-${volumeId}">
-    <div class="modal-header"><div class="modal-title">Buchinfos</div>
-    <button data-close-button class="modal-button">&times;</button></div>
-    <div class="modal-body">${authors}<br>${title}<br>${subttl}<br>${publishedYear}</div></div></div>`
-  }
+  html += `<div class="book">
+  <button class="btn-book" id="${book.id}">${bookCover}</button>
+  </div>`;
 
   return html
 }
 
-// Initializes buttons for bookcover modals and libriam logo
-function initButtons () {
-  // Gets all opening and closing buttons, and the libriam logo
-  const openModalButtons = document.querySelectorAll('[data-modal-target]');
-  const closeModalButtons = document.querySelectorAll('[data-close-button]');
+// Initializes buttons for bookcovers and libriam logo
+async function initButtons (searchResults) {
+  // Gets all modal opening buttons (bookcovers) and the modal closing button, and the libriam logo
+  const modal = document.querySelector('.modal');
+  const bookData = !searchResults ? await getBooks() : searchResults;
+  const openModalButtons = document.querySelectorAll('.btn-book');
+  const closeModalButton = document.querySelector('.modal-close-button');
   const logoButton = document.querySelector('#libriam-logo');
 
-  // Adds event listener to each opening button
+  // Adds event listener to each opening button (bookcover)
   openModalButtons.forEach(button => {
     button.addEventListener('click', () => {
-      const modal = document.querySelector(button.dataset.modalTarget);
-      openModal(modal);
+      openModal(button, bookData);
     })
   })
 
-  // Adds event listener to each closing button
-  closeModalButtons.forEach(button => {
-    button.addEventListener('click', () => {
-      const modal = button.closest('.modal');
-      closeModal(modal);
-    })
-  })
+  // Adds event listener to modal closing button
+  closeModalButton.addEventListener('click', () => {
+      closeModal();
+    }
+  )
 
   // Adds event listener to the overlay-element in the html
-  overlay.addEventListener('click', () => {
-    const modals = document.querySelectorAll('.modal.active');
-    const deleteModals = document.querySelectorAll('.modal-delete.active')
-    modals.forEach(modal => {
-      closeModal(modal)
-    })
-    deleteModals.forEach(modal => {
-      closeModal(modal)
-    })
-  })
+  document.querySelector('.overlay').addEventListener('click', closeModal)
 
   // Adds an event listener to the libriam logo
   logoButton.addEventListener('click', () => {
@@ -161,29 +80,63 @@ function initButtons () {
 }
 
 // Handles modal events
-function openModal(modal) {
+function openModal(button, bookData) {
+  const modal = document.querySelector('.modal');
+  // Identifies clicked book among search results or books.json
+  let clickedBook = '';
+  for (let i=0; i < bookData.length; i++) {
+    if (bookData[i].id === button.id) {
+      clickedBook = bookData[i]
+    }
+  }
+
+  fillModal(clickedBook);
+
+  // Brauche ich diese Zeile überhaupt noch?:
   if (modal === null) return
+
+  // Sets style of modal and overlay elements to active
   modal.classList.add('active');
-  overlay.classList.add('active');
+  document.querySelector('.overlay').classList.add('active');
 }
 
-function closeModal(modal) {
+// Fills modal with book information, puts in placeholders for missing information
+// (Used object destructuring with clickedBook because it's a neat way to handle none existing keys/values
+// without using so many if statements)
+function fillModal (clickedBook) {
+  const {
+    authors = '[Autor unbekannt]',
+    title = '[Titel unbekannt]',
+    subtitle = '-',
+    publishedYear = '[Jahr unbekannt]' 
+  } = clickedBook;
+  document.querySelector('#authors').innerHTML = `${authors}`;
+  document.querySelector('#title').innerHTML = `${title}`;
+  document.querySelector('#subtitle').innerHTML = `${subtitle}`;
+  document.querySelector('#published-date').innerHTML = `${publishedYear}`;
+}
+
+function closeModal() {
+  const modal = document.querySelector('.modal');
+  // Hier wieder: brauche ich die folgende Zeile überhaupt noch?
   if (modal === null) return
+
+  // Sets style of modal and overlay to invisible
   modal.classList.remove('active');
-  overlay.classList.remove('active');
+  document.querySelector('.overlay').classList.remove('active');
 }
 
 // Handles loading animation:
 function loaderBookshelfOff () {
-  loader.style.opacity = 0;
-  loader.style.display = 'none';
-  bookshelf.style.display = 'flex';
-  setTimeout(() => (bookshelf.style.opacity = 1), 50);
+  document.querySelector('.loader').style.opacity = 0;
+  document.querySelector('.loader').style.display = 'none';
+  document.querySelector('#bookshelf').style.display = 'flex';
+  setTimeout(() => (document.querySelector('#bookshelf').style.opacity = 1), 50);
 }
 
 function loaderBookshelfOn () {
-  loader.style.opacity = 1;
-  loader.style.display = 'flex';
-  bookshelf.style.display = 'none';
-  bookshelf.style.opacity = 0;
+  document.querySelector('.loader').style.opacity = 1;
+  document.querySelector('.loader').style.display = 'flex';
+  document.querySelector('#bookshelf').style.display = 'none';
+  document.querySelector('#bookshelf').style.opacity = 0;
 }

@@ -28,23 +28,24 @@ app.use(cors({
 }))
 
 // Gets all books
-app.get('/books', (request, response) => {
-  response.send(books)
+app.get('/books', (req, res) => {
+  res.send(books)
 })
 
 // Saves book in books.json
-app.post('/addtolibrary', (request, response) => {
+app.post('/addtolibrary', (req, res) => {
   // Checks wether new book is already saved in library
-  let res = {status : 'new book saved'};
+  // inventory = method used by libraries to check in their books
+  let bookStatus = {status : 'new book saved'};
   for (let i=0; i<books.length; i++) {
-    if (books[i].id === request.body.id) {
-      res.status = 'refused to save doublet'
+    if (books[i].id === req.body.id) {
+      bookStatus.status = 'refused to save doublet'
     }
   }
 
-  if (res.status === 'new book saved') {
+  if (bookStatus.status === 'new book saved') {
     // Adds book from search results to "books"-array
-    books.push(request.body)
+    books.push(req.body)
 
     // Stringifies book data for writeFile-method
     const booksString = JSON.stringify(books, null, 2)
@@ -53,21 +54,21 @@ app.post('/addtolibrary', (request, response) => {
     fs.writeFile('./books.json', booksString, (error) => {
       if (error) {
         console.log('Error: ', error)
-        response.redirect('/searchpage');
+        res.redirect('/searchpage');
       }
       console.log('Added new book to books.json');
     })
   }
 
   // Sends response to libriam.js
-  response.header({'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'})
-  response.send(res)
+  res.header({'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'})
+  res.send(bookStatus)
 })
 
 // Deletes book from books.json
-app.post('/deletebook', (request, response) => {
+app.post('/deletebook', (req, res) => {
   // Gets id of the book from request body
-  const deleteBookId = request.body.id;
+  const deleteBookId = req.body.id;
 
   // Removes book object with the same id from "books"-array
   let deletedBook = '';
@@ -84,10 +85,10 @@ app.post('/deletebook', (request, response) => {
   fs.writeFile('./books.json', booksString, (error) => {
     if (error) {
       console.log('Error: ', error)
-      response.redirect('/searchpage');
+      res.redirect('/searchpage');
     }
     console.log('Deleted book from books.json: ', deletedBook);
   })
 
-  response.send()
+  res.send()
 })

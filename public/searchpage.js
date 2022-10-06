@@ -1,20 +1,20 @@
-const searchForm = document.querySelector('#form-search');
 let searchResults = [];
+const searchForm = document.querySelector('#form-search');
 
 initSearch();
 
 // Initializes form for searching books for searchpage.html
 function initSearch () {
-    searchForm.addEventListener('submit', searchBooks);
+  searchForm.addEventListener('submit', searchBooks);
   }
   
-  // Takes user input from searchpage.html and searches for books via google API
+  // Takes user input from form and searches for books via google API
   async function searchBooks (e) {
     e.preventDefault(e)
   
     // Activates loading animation and empties former search results
     loaderBookshelfOn();
-    document.querySelector('#search-results').innerHTML = '';
+    document.querySelector('#bookshelf').innerHTML = '';
   
     // Gets user input from form on searchpage.html
     const userInput = document.querySelector('#searchkeyword').value;
@@ -37,36 +37,51 @@ function initSearch () {
     }
   
     // Adds a copy of book object array to variable
-    // searchResults (initialized at the beginning of libriam.js)
     searchResults = [...resultsArray];
   
     // Puts search results on page
     fillBookshelf(searchResults);
-    // Initializes save buttons and modal buttons for search results on page
+
+    // Initializes modal buttons for search results on page and save button inside modal
+    initButtons(searchResults);
     initSaveButton();
-    initButtons();
   }
   
 // Creates new object from google search result, taking only necessary information
 function createSearchedBook (item) {
-  searchedBook = {
+  let searchedBook = {
     "id": item.id,
     "title": item.volumeInfo.title,
     "subtitle": item.volumeInfo.subtitle,
     "authors": item.volumeInfo.authors,
-    "publishedDate": item.volumeInfo.publishedDate,
-    "imageLinks": item.volumeInfo.imageLinks,
+    "publishedYear": item.volumeInfo.publishedDate,
+    "imageLinks": item.volumeInfo.imageLinks
   }
+
+  // Removes keys with a value of undefined
+  // (Necessary for fillModal() in libriam.js to work, because it works better with the object destructuring I used there)
+  // (Notiz für mich: der Code auf der rechten Seite von && wird nur ausgeführt, wenn der Code auf der linken Seite true ergiebt.)
+  Object.keys(searchedBook).forEach((key) => searchedBook[key] === undefined && delete searchedBook[key]);
+
+  // If there is a key/value-pair for publishedYear, reduces value to year (removes month and day)
+  if (searchedBook.publishedYear) {searchedBook.publishedYear = searchedBook.publishedYear.split('-')[0]};
+
   return searchedBook
 }
   
-// Initializes save button for search results
+// Sets id of save button inside the modal to same id as the clicked bookcover,
+// because that id will be used for identification of the right book object in requestSave()
 function initSaveButton () {
-  const saveButtons = document.querySelectorAll('.btn-results');
+  const openModalButtons = document.querySelectorAll('.btn-book');
+  const saveButton = document.querySelector('.btn-in-modal');
   
-  saveButtons.forEach(button => {
-    button.addEventListener('click', requestSave)
+  openModalButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        saveButton.setAttribute('id', `${button.id}`);
+      })
   })
+
+  saveButton.addEventListener('click', requestSave)
 }
   
 // Sends save request to server
@@ -74,12 +89,9 @@ async function requestSave (event) {
   // Initializes variable for new book
   let newBook = '';
 
-  // Gets id for new book from clicked "save" button above the book on editlibrary.html
-  const newBookId = event.target.id;
-
-  // Searches for this id in searchResults and puts object with that id on variable "newBook"
+  // Searches for save button id in searchResults and puts object with that id on variable "newBook"
   for (let i=0; i<searchResults.length; i++) {
-    if (searchResults[i].id === newBookId) {
+    if (searchResults[i].id === event.target.id) {
       newBook = searchResults[i]
     }
   }
@@ -93,19 +105,19 @@ async function requestSave (event) {
     },
     body: JSON.stringify(newBook),
   });
-
-  // Parses response from server
-  const data = await response.json();
-
-  // Checks wether response confirms save process
+  const bookStatus = await response.json();
+  
+  closeModal();
+  
+  // Checks wether response confirms saving process
   // or refused due to new book already being in the library
-  if (data.status === 'new book saved') {
-      document.querySelector('#search-results').innerHTML = 
-      '<h2 style="color:grey">Buch gespeichert!</h2>';
+  if (bookStatus.status === 'new book saved') {
+      document.querySelector('#bookshelf').innerHTML = 
+      '<h2>Buch gespeichert!</h2>';
   }
-  if (data.status === 'refused to save doublet') {
-      document.querySelector('#search-results').innerHTML = 
-      '<h2 style="color:grey">Buch ist bereits in Bibliothek vorhanden!</h2>';
+  if (bookStatus.status === 'refused to save doublet') {
+      document.querySelector('#bookshelf').innerHTML = 
+      '<h2>Buch ist bereits in Bibliothek vorhanden!</h2>';
   }
   
   searchResults = [];
