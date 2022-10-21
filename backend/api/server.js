@@ -8,14 +8,27 @@ const fs = require("fs");
 const cors = require("cors");
 const express = require("express");
 const app = express();
-const books = require("./books.json");
+const books = require("../db/books.json");
 
 // PORT
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
 
 // Middleware for static directories
-app.use(express.static(path.join(__dirname, "public")));
+// index.html in public-Ordner packen?
+const pathFrontend = path.join(
+  "C:",
+  "Users",
+  "miria",
+  "Documents",
+  "Webdev",
+  "libriam",
+  "frontend"
+);
+app.use(express.static(path.join(pathFrontend, "html")));
+app.use(express.static(path.join(pathFrontend, "css")));
+app.use(express.static(path.join(pathFrontend, "img")));
+app.use(express.static(path.join(pathFrontend, "js")));
 
 // Middleware body parser
 app.use(express.json());
@@ -27,6 +40,13 @@ app.use(
     origin: "*",
   })
 );
+
+// Hiermit passiert wenigstens etwas unter localhost:3000/:
+// app.get("/", (req, res) => {
+//   res.send(
+//     'app.get("/") sendet etwas, aber es soll ja nicht der express server rendern'
+//   );
+// });
 
 // Gets all books
 app.get("/books", (req, res) => {
@@ -52,7 +72,7 @@ app.post("/addtolibrary", (req, res) => {
     const booksString = JSON.stringify(books, null, 2);
 
     // Saves book data in book.json file
-    fs.writeFile("./books.json", booksString, (error) => {
+    fs.writeFile("./../libriam/backend/db/books.json", booksString, (error) => {
       if (error) {
         console.log("Error: ", error);
         res.redirect("/searchpage");
@@ -82,7 +102,7 @@ app.post("/deletebook", (req, res) => {
   const booksString = JSON.stringify(books, null, 2);
 
   // Overwrites books.json with new "books"-array
-  fs.writeFile("./books.json", booksString, (error) => {
+  fs.writeFile("./../libriam/backend/db/books.json", booksString, (error) => {
     if (error) {
       console.log("Error: ", error);
     }
