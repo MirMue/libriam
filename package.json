@@ -2,7 +2,7 @@
   "name": "libriam",
   "version": "1.0.0",
   "description": "libriam npm packages",
-  "main": "server.js",
+  "main": "backend/api/server.js",
   "scripts": {
     "start": "node server",
     "dev": "nodemon server"

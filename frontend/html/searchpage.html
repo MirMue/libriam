@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Libriam - Büchersuche</title>
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="icon" href="../img/libriam_favicon.ico" />
+    <script src="../js/libriam.js" defer></script>
+    <script src="../js/searchpage.js" defer></script>
+</head>
+<body>
+    <header>
+        <img id="libriam-logo" src="../img/libriam_logo_v3.png">
+    </header>
+    <h1 style="color:gray">Büchersuche</h1>
+    <form class="form-main" id="form-search">
+        <input type="text" placeholder="Titel, Autor, Schlagworte..." name="keyword" class="input-search" id="searchkeyword">
+        <button type="submit" class="btn-search" id="btn-search">Suchen</button>
+    </form>
+    <div class="loader" style="display:none; opacity:0">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    <div id="results-text"></div>
+    <div class="container" id="bookshelf"></div>
+    <div id="no-results"></div>
+    <a style="padding: 1rem;" href="index.html">Zurück zur Bibliothek</a>
+    <div class="overlay"></div>
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-title">Buchinfos</div>
+            <button class="btn-modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <span id="modal-authors">[Autor unbekannt]</span><br>
+            <span id="modal-title">[Titel unbekannt]</span><br>
+            <span id="modal-subtitle">-</span><br>
+            <span id="modal-published-date">[Jahr unbekannt]</span>
+            <form id="form-delete">
+            <form>
+                <input type="button" class="btn-modal-form" value="Speichern"/>
+            </form>
+        </div>
+    </div>
+</body> 
+</html>

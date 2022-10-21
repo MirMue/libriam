@@ -1,0 +1,186 @@
+body {
+  text-align: center;
+  font-family: Georgia, "Times New Roman", Times, serif;
+  background-color: white;
+  margin: 0 auto;
+  width: 80%;
+  opacity: 1;
+}
+
+header {
+  padding: 5px;
+}
+
+h2 {
+  color: gray;
+}
+
+.loader {
+  display: flex;
+  height: 26px;
+  justify-content: center;
+  align-items: center;
+  padding: 5rem;
+}
+
+.loader > span {
+  display: inline-block;
+  background-color: lightgray;
+  width: 0px;
+  height: 0px;
+  border-radius: 50%;
+  margin: 0 10px;
+  animation: pulsate 1s infinite alternate;
+}
+
+.loader > span:nth-child(2) {
+  background-color: darkgray;
+  animation-delay: 0.25s;
+}
+
+.loader > span:nth-child(3) {
+  background-color: gray;
+  animation-delay: 0.5s;
+}
+
+@keyframes pulsate {
+  to {
+    width: 25px;
+    height: 25px;
+  }
+}
+
+#bookshelf {
+  display: flex;
+  opacity: 0;
+  flex-flow: row wrap;
+  justify-content: center;
+  align-items: flex-end;
+  align-content: flex-start;
+  gap: 10px 20px;
+  padding: 1rem;
+  transition: opacity 1s ease-in;
+}
+
+.book:hover::before {
+  content: "Mehr...";
+  position: absolute;
+  background-color: black;
+  color: white;
+  padding: 5px;
+}
+
+.bookcover {
+  width: 146px;
+  height: 220px;
+}
+
+.bookcover.empty {
+  border: solid 1px grey;
+  background-color: white;
+}
+
+.bookcover.empty p {
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-size: medium;
+}
+
+.btn-book {
+  border: none;
+  background-color: white;
+}
+
+.btn-modal-form {
+  padding: 0.5rem 0.8rem;
+  background-color: black;
+  color: white;
+  font-size: smaller;
+  font-family: Georgia, "Times New Roman", Times, serif;
+  width: 146px;
+}
+
+.form-main {
+  padding: 1rem;
+}
+
+.btn-search {
+  padding: 0.5rem 0.8rem;
+  background-color: goldenrod;
+  font-size: medium;
+  font-family: Georgia, "Times New Roman", Times, serif;
+}
+
+.input-search {
+  padding: 0.5rem;
+  font-size: medium;
+  font-family: Georgia, "Times New Roman", Times, serif;
+  box-sizing: border-box;
+  width: 25%;
+}
+
+.input-inv {
+  opacity: 0;
+  display: none;
+  width: 0px;
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  transition: 200ms ease-in-out;
+  border: 1px solid black;
+  border-radius: 10px;
+  z-index: 10;
+  background-color: white;
+  width: 500px;
+  max-width: 80%;
+}
+
+.modal.active {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.modal-header {
+  padding: 10px 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid black;
+}
+
+.modal-header .modal-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.modal-header .btn-modal-close {
+  cursor: pointer;
+  border: none;
+  outline: none;
+  background: none;
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.modal-body {
+  padding: 10px 15px;
+}
+
+.overlay {
+  position: fixed;
+  opacity: 0;
+  transition: 200ms ease-in-out;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+
+.overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
