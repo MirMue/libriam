@@ -24,4 +24,11 @@
 -- 'http://books.google.com/books/publisher/content?id=Jmv6DwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&imgtk=AFLRE70yVSOGWHqYi5agh2SwzMYtlbTLkBQOZ2D9E-6_rYqQ1tRlvBpdzuqBWjRYwA7uXDUuFgW58KHatSgpwyrjPTQc0PPG__qBedMbQ-Nba7gIzyhLDp93TsswC4HJvvdjFGTz3AAm&source=gbs_api'
 -- );
 
-SELECT * FROM books;
+-- SELECT * FROM books;
+
+-- Spaltenname und Eintrag geändert:
+-- ALTER TABLE books
+-- RENAME COLUMN googleLink TO googleBookId;
+-- UPDATE books
+-- SET googleBookId = 'Jmv6DwAAQBAJ'
+-- WHERE id = 1;
