@@ -31,9 +31,7 @@ app.post("/books", (req, res) => {
   // Checks wether new book is already saved in library
   for (let i = 0; i < books.length; i++) {
     if (books[i].id === req.body.id) {
-      return res
-        .status(400)
-        .send({ success: false, msg: "Book already in database" });
+      return res.status(400).send({ msg: "doublet" });
     }
   }
 
@@ -47,35 +45,30 @@ app.post("/books", (req, res) => {
   fs.writeFile("../backend/db/books.json", booksString, (error) => {
     if (error) {
       console.log("Error: ", error);
+      res.status(500).send({ error: "Server error occured" });
     } else {
       console.log("Added new book to books.json");
+      res.send();
     }
   });
-
-  res.status(200).send({ success: true, msg: "Book saved to database" });
 });
 
 // Deletes book from books.json
 app.delete("/books/:id", (req, res) => {
-  // Removes book object with fitting id from "books"-array
-  let deletedBook = "";
-  for (let i = 0; i < books.length; i++) {
-    if (books[i].id === req.params.id) {
-      deletedBook = books.splice(i, 1);
-    }
-  }
+  // Removes book object from books array
+  const newBooksArray = books.filter((book) => book.id !== req.params.id);
 
-  // Stringifies and formats the new "books"-array
-  const booksString = JSON.stringify(books, null, 2);
+  // Stringifies and formats the new books array
+  const newBooksString = JSON.stringify(newBooksArray, null, 2);
 
-  // Overwrites books.json with new "books"-array
-  fs.writeFile("../backend/db/books.json", booksString, (error) => {
+  // Overwrites books.json with stringified new books array
+  fs.writeFile("../backend/db/books.json", newBooksString, (error) => {
     if (error) {
       console.log("Error: ", error);
+      res.status(500).send({ error: "Server error occured" });
+    } else {
+      console.log("Deleted book from books.json");
+      res.send();
     }
-    console.log("Deleted book from books.json");
   });
-
-  // Ich weiß, dass die response auch so gesendet wird, wenn das Löschen nicht erfolgreich war:
-  res.status(200).send({ success: true, msg: "Book deleted from database" });
 });

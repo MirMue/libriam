@@ -38,7 +38,7 @@ async function requestDeletion(e) {
   closeModal();
 
   // Checks wether deletion was successful
-  if (response.status === 200) {
+  if (response.ok) {
     document.querySelector("#bookshelf").innerHTML = "<h2>Buch gelöscht!</h2>";
   }
   // Werde mich noch informieren, wie man gute Errormeldungen schreibt:

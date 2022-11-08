@@ -119,13 +119,17 @@ async function requestSave(event) {
 
   // Checks wether response confirms saving process
   // or refused due to new book already being in the library
-  if (response.status === 200) {
+  if (response.ok) {
     document.querySelector("#bookshelf").innerHTML =
       "<h2>Buch gespeichert!</h2>";
-  }
-  if (response.status === 400) {
-    document.querySelector("#bookshelf").innerHTML =
-      "<h2>Buch ist bereits in Bibliothek vorhanden!</h2>";
+  } else {
+    const data = await response.json();
+    if (data.msg === "doublet") {
+      document.querySelector("#bookshelf").innerHTML =
+        "<h2>Buch ist bereits in Bibliothek vorhanden!</h2>";
+    } else {
+      console.log(`Error: response.status: ${response.status}`);
+    }
   }
 
   searchResults = [];
