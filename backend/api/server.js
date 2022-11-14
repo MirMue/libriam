@@ -42,15 +42,15 @@ app.post("/books", (req, res) => {
   const booksString = JSON.stringify(books, null, 2);
 
   // Saves book data in book.json file
-  fs.writeFile("../backend/db/books.json", booksString, (error) => {
-    if (error) {
-      console.log("Error: ", error);
-      res.status(500).send({ error: "Server error occured" });
+  fs.writeFile("../backend/db/books.json", booksString, (err) => {
+    if (err) {
+      console.log("Error: ", err);
     } else {
       console.log("Added new book to books.json");
-      res.send();
     }
   });
+
+  res.send();
 });
 
 // Deletes book from books.json
@@ -62,13 +62,13 @@ app.delete("/books/:id", (req, res) => {
   const newBooksString = JSON.stringify(newBooksArray, null, 2);
 
   // Overwrites books.json with stringified new books array
-  fs.writeFile("../backend/db/books.json", newBooksString, (error) => {
-    if (error) {
-      console.log("Error: ", error);
-      res.status(500).send({ error: "Server error occured" });
+  fs.writeFile("../backend/db/books.json", newBooksString, (err) => {
+    if (err) {
+      console.log("error: ", err);
     } else {
       console.log("Deleted book from books.json");
-      res.send();
     }
   });
+
+  res.send();
 });
