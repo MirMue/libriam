@@ -106,7 +106,7 @@ async function requestSave(event) {
   }
 
   // Sends post request to server with newBook-object as request body
-  const response = await fetch("http://localhost:3000/addtolibrary", {
+  const response = await fetch("http://localhost:3000/books", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -114,19 +114,22 @@ async function requestSave(event) {
     },
     body: JSON.stringify(newBook),
   });
-  const bookStatus = await response.json();
 
   closeModal();
 
   // Checks wether response confirms saving process
   // or refused due to new book already being in the library
-  if (bookStatus.status === "new book saved") {
+  if (response.ok) {
     document.querySelector("#bookshelf").innerHTML =
       "<h2>Buch gespeichert!</h2>";
-  }
-  if (bookStatus.status === "refused to save doublet") {
-    document.querySelector("#bookshelf").innerHTML =
-      "<h2>Buch ist bereits in Bibliothek vorhanden!</h2>";
+  } else {
+    const data = await response.json();
+    if (data.msg === "doublet") {
+      document.querySelector("#bookshelf").innerHTML =
+        "<h2>Buch ist bereits in Bibliothek vorhanden!</h2>";
+    } else {
+      console.log(`Error: response.status: ${response.status}`);
+    }
   }
 
   searchResults = [];

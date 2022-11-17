@@ -26,30 +26,23 @@ function initDeleteButton() {
 }
 
 // Sends delete request to server
-async function requestDeletion(event) {
+async function requestDeletion(e) {
   // Gets id from clicked delete button above the book
-  const deleteBookId = { id: event.target.getAttribute("data-bookId") };
+  const id = e.target.getAttribute("data-bookId");
 
   // Sends post request to server with book id as request body
-  const response = await fetch("http://localhost:3000/deletebook", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
-    },
-    body: JSON.stringify(deleteBookId),
+  const response = await fetch("http://localhost:3000/books/" + id, {
+    method: "DELETE",
   });
 
   closeModal();
 
-  // Checks wether response.ok is true
+  // Checks wether deletion was successful
   if (response.ok) {
     document.querySelector("#bookshelf").innerHTML = "<h2>Buch gelöscht!</h2>";
   }
   // Werde mich noch informieren, wie man gute Errormeldungen schreibt:
   else {
-    console.log(
-      `Error: response.ok = ${response.ok}, response.status: ${response.status}`
-    );
+    console.log(`Error: response.status: ${response.status}`);
   }
 }
