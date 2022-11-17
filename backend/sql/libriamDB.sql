@@ -1,6 +1,6 @@
 -- CREATE TABLE books(
 -- id INTEGER PRIMARY KEY,
--- googleLink TEXT,
+-- googleBookId TEXT,
 -- authors TEXT,
 -- title TEXT,
 -- subtitle TEXT,
@@ -10,14 +10,14 @@
 
 -- Testweise manuell eingefügt:
 -- INSERT INTO books (
--- googleLink,
+-- googleBookId,
 -- authors,
 -- title,
 -- publishedYear,
 -- imgLink
 -- ) 
 -- VALUES (
--- 'https://www.googleapis.com/books/v1/volumes/Jmv6DwAAQBAJ',
+-- 'Jmv6DwAAQBAJ',
 -- 'Stephen King',
 -- 'Rita Hayworth and Shawshank Redemption',
 -- '2020',
