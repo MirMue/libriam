@@ -29,8 +29,8 @@ async function fillBookshelf(bookData) {
 function createBookHtml(book) {
   // Checks for thumbnail, uses placeholder if there is none
   let bookCover = "";
-  book.imageLinks
-    ? (bookCover = `<img class="bookcover" src="${book.imageLinks.thumbnail}">`)
+  book.imgLink
+    ? (bookCover = `<img class="bookcover" src="${book.imgLink}">`)
     : (bookCover = `<div class="bookcover empty">
     <p>${book.authors ? book.authors : "[Autor unbekannt]"}</p>
     <p>${book.title ? book.title : "[Titel unbekannt]"}</p>
@@ -40,7 +40,7 @@ function createBookHtml(book) {
   // Creates html element of a book
   let html = "";
   html += `<div class="book">
-  <button class="btn-book" data-bookId="${book.id}">${bookCover}</button>
+  <button class="btn-book" data-bookId="${book.googleBookId}">${bookCover}</button>
   </div>`;
 
   return html;
@@ -80,7 +80,7 @@ function openModal(button, bookData) {
   // Identifies clicked book among search results or books.json
   let clickedBook = "";
   for (let i = 0; i < bookData.length; i++) {
-    if (bookData[i].id === button.getAttribute("data-bookId")) {
+    if (bookData[i].googleBookId === button.getAttribute("data-bookId")) {
       clickedBook = bookData[i];
     }
   }

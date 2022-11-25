@@ -32,3 +32,8 @@
 -- UPDATE books
 -- SET googleBookId = 'Jmv6DwAAQBAJ'
 -- WHERE id = 1;
+
+-- Link zu Google Books JSON Objekten: https://www.googleapis.com/books/v1/volumes/[googleBookId]
+
+-- Löscht den table "books"
+-- DROP TABLE books;
