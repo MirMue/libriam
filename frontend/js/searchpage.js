@@ -57,7 +57,7 @@ function createSearchedBook(item) {
     title: item.volumeInfo.title,
     subtitle: item.volumeInfo.subtitle,
     publishedYear: item.volumeInfo.publishedDate,
-    imgLink: item.volumeInfo.imageLinks.smallThumbnail,
+    imgLink: item.volumeInfo.imageLinks,
   };
 
   // Removes keys with a value of undefined
@@ -70,6 +70,12 @@ function createSearchedBook(item) {
   // If there is a key/value-pair for publishedYear, reduces value to year (removes month and day)
   if (searchedBook.publishedYear) {
     searchedBook.publishedYear = searchedBook.publishedYear.split("-")[0];
+  }
+
+  // If there are imageLinks, choose the smallThumbnail as imgLink
+  // (weil "imgLink : item.volumeInfo.imageLinks.smallThumbnail" in Zeile 60 nicht funktioniert)
+  if (searchedBook.imgLink) {
+    searchedBook.imgLink = searchedBook.imgLink.smallThumbnail;
   }
 
   return searchedBook;

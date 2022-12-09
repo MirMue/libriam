@@ -3,7 +3,7 @@ initEditlibrary();
 async function initEditlibrary() {
   const bookData = await getBooks();
   await fillBookshelf(bookData);
-  initButtons();
+  initButtons(bookData);
   initDeleteButton();
 }
 

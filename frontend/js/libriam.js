@@ -47,10 +47,9 @@ function createBookHtml(book) {
 }
 
 // Initializes buttons for bookcovers and libriam logo
-async function initButtons(searchResults) {
+async function initButtons(bookData) {
   // Gets all modal opening buttons (bookcovers) and the modal closing button, and the libriam logo
   const modal = document.querySelector(".modal");
-  const bookData = !searchResults ? await getBooks() : searchResults;
   const openModalButtons = document.querySelectorAll(".btn-book");
   const closeModalButton = document.querySelector(".btn-modal-close");
   const logoButton = document.querySelector("#libriam-logo");
