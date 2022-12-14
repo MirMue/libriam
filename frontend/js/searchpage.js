@@ -52,12 +52,12 @@ async function searchBooks(e) {
 // Creates new object from google search result, taking only necessary information
 function createSearchedBook(item) {
   let searchedBook = {
-    id: item.id,
+    googleBookId: item.id,
+    authors: item.volumeInfo.authors,
     title: item.volumeInfo.title,
     subtitle: item.volumeInfo.subtitle,
-    authors: item.volumeInfo.authors,
     publishedYear: item.volumeInfo.publishedDate,
-    imageLinks: item.volumeInfo.imageLinks,
+    imgLink: item.volumeInfo.imageLinks,
   };
 
   // Removes keys with a value of undefined
@@ -70,6 +70,12 @@ function createSearchedBook(item) {
   // If there is a key/value-pair for publishedYear, reduces value to year (removes month and day)
   if (searchedBook.publishedYear) {
     searchedBook.publishedYear = searchedBook.publishedYear.split("-")[0];
+  }
+
+  // If there are imageLinks, choose the smallThumbnail as imgLink
+  // (weil "imgLink : item.volumeInfo.imageLinks.smallThumbnail" in Zeile 60 nicht funktioniert)
+  if (searchedBook.imgLink) {
+    searchedBook.imgLink = searchedBook.imgLink.smallThumbnail;
   }
 
   return searchedBook;
@@ -100,8 +106,11 @@ async function requestSave(event) {
 
   // Searches for save button id in searchResults and puts object with that id on variable "newBook"
   for (let i = 0; i < searchResults.length; i++) {
-    if (searchResults[i].id === event.target.getAttribute("data-bookId")) {
+    if (
+      searchResults[i].googleBookId === event.target.getAttribute("data-bookId")
+    ) {
       newBook = searchResults[i];
+      console.log("newBook: ", newBook);
     }
   }
 

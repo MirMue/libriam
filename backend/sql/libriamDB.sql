@@ -32,3 +32,24 @@
 -- UPDATE books
 -- SET googleBookId = 'Jmv6DwAAQBAJ'
 -- WHERE id = 1;
+
+-- Link zu Google Books JSON Objekten: https://www.googleapis.com/books/v1/volumes/[googleBookId]
+
+-- Löscht den table "books"
+-- DROP TABLE books;
+
+
+-- db.run(
+-- "CREATE TABLE books (id INTEGER PRIMARY KEY, googleBookId TEXT, authors TEXT, title TEXT, subtitle TEXT, publishedYear TEXT, imgLink TEXT)"
+-- );
+
+-- db.run(
+-- "INSERT INTO books (googleBookId, authors, title, subtitle, publishedYear, imgLink) VALUES ('53FrZyCuITEC', 'Michail Bulgakow', 'Teufeliaden', 'Erzählungen', '2012', 'http://books.google.com/books/content?id=53FrZyCuITEC&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api')",
+-- (err) => {
+-- if (err) {
+-- return console.log("app.get, db.run(INSERT...): ", err);
+-- }
+-- }
+-- );
+
+-- db.run("DELETE FROM books");
