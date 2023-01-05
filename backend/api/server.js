@@ -28,75 +28,50 @@ process.on("SIGINT", () => {
   console.log("DATABASE CLOSED!");
 });
 
-// async/await funktioniert nicht in Express bzw. soll erst ab Express 5.0 unterstützt werden.
-// Deshalb hab ich nach folgendem Vorbild einen asyncHandler gebaut:
-// https://ioannisioannou.me/using-async-await-in-express-js/
-
-// Ermöglicht den Gebrauch von async/await, weil Express wohl nicht automatisch mit rejected promises umgehen kann:
-const asyncHandler = (funct) => (req, res, err) => {
-  Promise.resolve(funct(req, res)).catch((err) => {
-    console.log("Error in asyncHandler: ", err);
-  });
-};
-
-function checkForDoublet(newBookId, idArray) {
+async function getAllBooks() {
   return new Promise((resolve, reject) => {
-    let isDoublet = "no";
-    if (idArray.length === 0) {
-      isDoublet = "no";
-      resolve(isDoublet);
-    }
-    for (let i = 0; i < idArray.length; i++) {
-      if (idArray[i] === newBookId) {
-        isDoublet = "yes";
-        resolve(isDoublet);
-      } else if (idArray[i] !== newBookId && i + 1 === idArray.length) {
-        isDoublet = "no";
-        resolve(isDoublet);
-      }
-    }
-  }).catch((err) => {
-    console.log("Error in checkForDoublet: ", err);
-  });
-}
-
-function getIdArray() {
-  return new Promise((resolve, reject) => {
-    let idArray = [];
+    let bookDataArray = [];
     db.each(
-      "SELECT googleBookId FROM books",
+      "SELECT rowid AS id, googleBookId, authors, title, subtitle, publishedYear, imgLink FROM books",
       (err, row) => {
         if (err) {
-          console.log("Error in getIdArray, db.each callback 1: ", err);
+          console.log("Error in getAllBooks, db.each callback 1: ", err);
           reject(err);
         }
-        idArray.push(row.googleBookId);
+        const bookObj = {
+          id: row.id,
+          googleBookId: row.googleBookId,
+          authors: row.authors,
+          title: row.title,
+          subtitle: row.subtitle,
+          publishedYear: row.publishedYear,
+          imgLink: row.imgLink,
+        };
+        bookDataArray.push(bookObj);
       },
       (err, rowNrs) => {
         if (err) {
-          console.log("Error in getIdArray:, db.each callback 2 ", err);
+          console.log("Error in getAllBooks, db.each callback 2: ", err);
           reject(err);
         }
-        resolve(idArray);
+        resolve(bookDataArray);
       }
     );
-  }).catch((err) => {
-    console.log("Error in getIdArray, catch: ", err);
   });
 }
 
-app.get("/books", (req, res) => {
-  // Wird try-catch hier überhaupt noch gebraucht, wenn ich hier jetzt Promise nutze?
-  try {
-    new Promise((resolve, reject) => {
-      let bookDataArray = [];
-      db.each(
-        "SELECT rowid AS id, googleBookId, authors, title, subtitle, publishedYear, imgLink FROM books",
-        (err, row) => {
-          if (err) {
-            console.log("Error in app.get, db.each callback 1: ", err);
-            reject(err);
-          }
+async function getBook(googleBookId) {
+  return new Promise((resolve, reject) => {
+    db.get(
+      "SELECT rowid AS id, googleBookId, authors, title, subtitle, publishedYear, imgLink FROM books WHERE googleBookId = ?",
+      googleBookId,
+      (err, row) => {
+        if (err) {
+          console.log("Error in getBook, db.get callback: ", err);
+          reject(err);
+        }
+
+        if (row) {
           const bookObj = {
             id: row.id,
             googleBookId: row.googleBookId,
@@ -106,78 +81,69 @@ app.get("/books", (req, res) => {
             publishedYear: row.publishedYear,
             imgLink: row.imgLink,
           };
-          bookDataArray.push(bookObj);
-        },
-        (err, rowNrs) => {
-          if (err) {
-            console.log("Error in app.get, db.each callback 2: ", err);
-            reject(err);
-          }
-          resolve(bookDataArray);
+          resolve(bookObj);
+        } else {
+          resolve(false);
         }
-      );
-    })
-      .then((bookData) => {
-        res.send(bookData);
-      })
-      .catch((err) => {
-        console.log("Error in app.get, Promise catch: ", err);
-        res.status(500).send({ msg: "server error" });
-      });
+      }
+    );
+  });
+}
+
+app.get("/books", async (req, res) => {
+  try {
+    const bookData = await getAllBooks();
+    res.send(bookData);
   } catch (err) {
-    console.log("Error in app.get, try-catch: ", err);
+    console.log("Error in app.get, catch: ", err);
     return res.status(500).send({ msg: "server error" });
   }
 });
 
-app.post(
-  "/books",
-  asyncHandler(async (req, res) => {
-    try {
-      const idArray = await getIdArray();
-      const isDoublet = await checkForDoublet(req.body.googleBookId, idArray);
-      if (isDoublet === "yes") {
-        console.log(
-          "Book is a doublet and won't be saved in DB: ",
-          req.body.title
-        );
-        return res.status(400).send({ msg: "doublet" });
-      }
-
-      // Hier auch mit Promise arbeiten, damit res nicht gesendet wird bevor db.serialize durch ist?
-      db.serialize(() => {
-        const stmt = db.prepare(
-          "INSERT INTO books (googleBookId, authors, title, subtitle, publishedYear, imgLink) VALUES (?, ?, ?, ?, ?, ?)",
-          (err) => {
-            if (err) {
-              return console.log("Error in app.post, prepare: ", err);
-            }
-          }
-        );
-
-        stmt.run(
-          req.body.googleBookId,
-          req.body.authors,
-          req.body.title,
-          req.body.subtitle,
-          req.body.publishedYear,
-          req.body.imgLink
-        );
-
-        stmt.finalize();
-      });
-      res.status(200).send({ msg: "book saved to library" });
-    } catch (err) {
-      console.log("Error in app.post catch: ", err);
-      res.status(500).send({ msg: "server error" });
+app.post("/books", async (req, res) => {
+  try {
+    const isDoublet = await getBook(req.body.googleBookId);
+    if (isDoublet) {
+      console.log("Doublet found. Book already exists in DB: ", isDoublet);
+      return res.status(400).send({ msg: "doublet" });
     }
-  })
-);
+
+    db.serialize(async () => {
+      const stmt = db.prepare(
+        "INSERT INTO books (googleBookId, authors, title, subtitle, publishedYear, imgLink) VALUES (?, ?, ?, ?, ?, ?)",
+        (err) => {
+          if (err) {
+            console.log("Error in app.post, prepare: ", err);
+          }
+        }
+      );
+
+      stmt.run(
+        req.body.googleBookId,
+        req.body.authors,
+        req.body.title,
+        req.body.subtitle,
+        req.body.publishedYear,
+        req.body.imgLink
+      );
+
+      stmt.finalize();
+
+      const isInDB = await getBook(req.body.googleBookId);
+
+      isInDB
+        ? res.status(200).send({ msg: "book successfully saved in DB" })
+        : res.status(500).send({ msg: "server failed to save book in DB" });
+    });
+  } catch (err) {
+    console.log("Error in app.post catch: ", err);
+    res.status(500).send({ msg: "server error" });
+  }
+});
 
 app.delete("/books/:id", (req, res) => {
   try {
-    // Hier auch mit Promise arbeiten, damit res nicht gesendet wird bevor db.serialize durch ist?
-    db.serialize(() => {
+    db.serialize(async () => {
       const stmt = db.prepare(
         "DELETE FROM books WHERE googleBookId = ?",
         (err) => {
@@ -190,8 +156,13 @@ app.delete("/books/:id", (req, res) => {
       stmt.run(req.params.id);
 
       stmt.finalize();
+
+      const isInDB = await getBook(req.params.id);
+
+      isInDB
+        ? res.status(500).send({ msg: "server failed to delete book from DB" })
+        : res.status(200).send({ msg: "book successfully deleted from DB" });
     });
-    res.status(200).send({ msg: "book deleted from library" });
   } catch (err) {
     console.log("Error in app.delete catch: ", err);
     res.status(500).send({ msg: "server error" });
