@@ -28,17 +28,50 @@ process.on("SIGINT", () => {
   console.log("DATABASE CLOSED!");
 });
 
-function getAllBooks() {
-  try {
-    return new Promise((resolve, reject) => {
-      let bookDataArray = [];
-      db.each(
-        "SELECT rowid AS id, googleBookId, authors, title, subtitle, publishedYear, imgLink FROM books",
-        (err, row) => {
-          if (err) {
-            console.log("Error in getAllBooks, db.each callback 1: ", err);
-            reject(err);
-          }
+async function getAllBooks() {
+  return new Promise((resolve, reject) => {
+    let bookDataArray = [];
+    db.each(
+      "SELECT rowid AS id, googleBookId, authors, title, subtitle, publishedYear, imgLink FROM books",
+      (err, row) => {
+        if (err) {
+          console.log("Error in getAllBooks, db.each callback 1: ", err);
+          reject(err);
+        }
+        const bookObj = {
+          id: row.id,
+          googleBookId: row.googleBookId,
+          authors: row.authors,
+          title: row.title,
+          subtitle: row.subtitle,
+          publishedYear: row.publishedYear,
+          imgLink: row.imgLink,
+        };
+        bookDataArray.push(bookObj);
+      },
+      (err, rowNrs) => {
+        if (err) {
+          console.log("Error in getAllBooks, db.each callback 2: ", err);
+          reject(err);
+        }
+        resolve(bookDataArray);
+      }
+    );
+  });
+}
+
+async function getBook(googleBookId) {
+  return new Promise((resolve, reject) => {
+    db.get(
+      "SELECT rowid AS id, googleBookId, authors, title, subtitle, publishedYear, imgLink FROM books WHERE googleBookId = ?",
+      googleBookId,
+      (err, row) => {
+        if (err) {
+          console.log("Error in getBook, db.get callback: ", err);
+          reject(err);
+        }
+
+        if (row) {
           const bookObj = {
             id: row.id,
             googleBookId: row.googleBookId,
@@ -48,45 +81,13 @@ function getAllBooks() {
             publishedYear: row.publishedYear,
             imgLink: row.imgLink,
           };
-          bookDataArray.push(bookObj);
-        },
-        (err, rowNrs) => {
-          if (err) {
-            console.log("Error in getAllBooks, db.each callback 2: ", err);
-            reject(err);
-          }
-          resolve(bookDataArray);
-        }
-      );
-    });
-  } catch (err) {
-    console.log("Error in getAllBooks, catch: ", err);
-    return res.status(500).send({ msg: "server error" });
-  }
-}
-
-function checkForDoublet(newBookId, bookData) {
-  try {
-    return new Promise((resolve, reject) => {
-      if (bookData.length === 0) {
-        resolve(false);
-      }
-
-      for (let i = 0; i < bookData.length; i++) {
-        if (bookData[i].googleBookId === newBookId) {
-          resolve(true);
-        } else if (
-          bookData[i].googleBookId !== newBookId &&
-          i + 1 === bookData.length
-        ) {
+          resolve(bookObj);
+        } else {
           resolve(false);
         }
       }
-    });
-  } catch (err) {
-    console.log("Error in checkForDoublet: ", err);
-    return res.status(500).send({ msg: "server error" });
-  }
+    );
+  });
 }
 
 app.get("/books", async (req, res) => {
@@ -101,17 +102,13 @@ app.get("/books", async (req, res) => {
 
 app.post("/books", async (req, res) => {
   try {
-    const bookData = await getAllBooks();
-    const isDoublet = await checkForDoublet(req.body.googleBookId, bookData);
+    const isDoublet = await getBook(req.body.googleBookId);
     if (isDoublet) {
-      console.log(
-        "Book is a doublet and won't be saved in DB: ",
-        req.body.title
-      );
+      console.log("Doublet found. Book already exists in DB: ", isDoublet);
       return res.status(400).send({ msg: "doublet" });
     }
 
-    db.serialize(() => {
+    db.serialize(async () => {
       const stmt = db.prepare(
         "INSERT INTO books (googleBookId, authors, title, subtitle, publishedYear, imgLink) VALUES (?, ?, ?, ?, ?, ?)",
         (err) => {
@@ -131,13 +128,13 @@ app.post("/books", async (req, res) => {
       );
 
       stmt.finalize();
-    });
 
-    res.status(200).send({
-      msg: "post request received, fucked if i know wether it worked though",
+      const savingWorked = await getBook(req.body.googleBookId);
+
+      savingWorked
+        ? res.status(200).send({ msg: "book successfully saved in DB" })
+        : res.status(500).send({ msg: "server failed to save book in DB" });
     });
-    // So wie ich es verstehe, wird res.status(200).send(...) immer abgeschickt, weil die callback Funktion in db.serialize nebenläufig ist und nichts was in ihr passiert das Absenden verhindern kann (auch die Verwendung von return oder reject in einem Promise bewirkt nichts). Die callback Funktion in db.prepare ist "noch nebenläufiger", hat also keinen Einfluss auf den Rest von db.serialize und kann nur für das loggen von errors verwendet werden.
-    // Ich bin sehr unglücklich damit, bisher keine Lösung dafür gefunden zu haben.
   } catch (err) {
     console.log("Error in app.post catch: ", err);
     res.status(500).send({ msg: "server error" });
