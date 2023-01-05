@@ -129,9 +129,9 @@ app.post("/books", async (req, res) => {
 
       stmt.finalize();
 
-      const savingWorked = await getBook(req.body.googleBookId);
+      const isInDB = await getBook(req.body.googleBookId);
 
-      savingWorked
+      isInDB
         ? res.status(200).send({ msg: "book successfully saved in DB" })
         : res.status(500).send({ msg: "server failed to save book in DB" });
     });
@@ -143,7 +143,7 @@ app.post("/books", async (req, res) => {
 
 app.delete("/books/:id", (req, res) => {
   try {
-    db.serialize(() => {
+    db.serialize(async () => {
       const stmt = db.prepare(
         "DELETE FROM books WHERE googleBookId = ?",
         (err) => {
@@ -156,9 +156,12 @@ app.delete("/books/:id", (req, res) => {
       stmt.run(req.params.id);
 
       stmt.finalize();
-    });
-    res.status(200).send({
-      msg: "delete request received, fucked if i know wether it worked though",
+
+      const isInDB = await getBook(req.params.id);
+
+      isInDB
+        ? res.status(500).send({ msg: "server failed to delete book from DB" })
+        : res.status(200).send({ msg: "book successfully deleted from DB" });
     });
   } catch (err) {
     console.log("Error in app.delete catch: ", err);
