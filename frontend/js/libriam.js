@@ -7,18 +7,25 @@ async function getBooks() {
 
 // Fills bookshelf container with book elements
 async function fillBookshelf(bookData) {
+  console.log(bookData);
   // Puts placeholder on page if library is empty
+  let container = document.querySelector("#bookshelf");
+  // Die Bedignung length === 6 ist nicht gut:
+  if (bookData.length === 6) {
+    container = document.querySelector("#container-results");
+  }
   if (bookData.length === 0) {
     let newVolume = document.createElement("div");
     newVolume.innerHTML = "<h2>Keine Bücher vorhanden...</h2>";
-    document.querySelector("#bookshelf").appendChild(newVolume);
+    // document.querySelector("#bookshelf").appendChild(newVolume);
+    container.appendChild(newVolume);
   }
   // Puts book elements on page
   else {
     for (const book of bookData) {
       let newVolume = document.createElement("div");
       newVolume.innerHTML = createBookHtml(book);
-      document.querySelector("#bookshelf").appendChild(newVolume);
+      container.appendChild(newVolume);
     }
   }
 

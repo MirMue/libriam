@@ -83,7 +83,8 @@ async function getBook(googleBookId) {
           };
           resolve(bookObj);
         } else {
-          resolve(false);
+          // Soll nichts zurückgeben:
+          resolve(null);
         }
       }
     );

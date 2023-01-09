@@ -15,6 +15,12 @@ h2 {
   color: gray;
 }
 
+hr {
+  border-width: 1px;
+  border-style: dashed;
+  border-color: lightgray;
+}
+
 .loader {
   display: flex;
   height: 26px;
@@ -50,7 +56,7 @@ h2 {
   }
 }
 
-#bookshelf {
+.container-books {
   display: flex;
   opacity: 0;
   flex-flow: row wrap;
@@ -61,6 +67,18 @@ h2 {
   padding: 1rem;
   transition: opacity 1s ease-in;
 }
+
+/* #bookshelf {
+  display: flex;
+  opacity: 0;
+  flex-flow: row wrap;
+  justify-content: center;
+  align-items: flex-end;
+  align-content: flex-start;
+  gap: 10px 20px;
+  padding: 1rem;
+  transition: opacity 1s ease-in;
+} */
 
 .book:hover::before {
   content: "Mehr...";
@@ -76,7 +94,7 @@ h2 {
 }
 
 .bookcover.empty {
-  border: solid 1px grey;
+  border: solid 1px gray;
   background-color: white;
 }
 
