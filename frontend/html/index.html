@@ -9,6 +9,7 @@
     <link rel="icon" href="../img/libriam_favicon.ico" />
     <script src="../js/libriam.js" defer></script>
     <script src="../js/index.js" defer></script>
+    <script src="../js/searchpage.js" defer></script>
   </head>
   <body>
     <header>
@@ -20,7 +21,22 @@
       <span></span>
       <span></span>
     </div>
-    <div class="container" id="bookshelf"></div>
+    <!-- <div class="container" id="bookshelf"></div> -->
+    <div class="container-books" id="bookshelf"></div>
+    <hr />
+    <h2 style="color: gray">Büchersuche</h2>
+    <form class="form-main" id="form-search">
+      <input
+        type="text"
+        placeholder="Titel, Autor, Schlagworte..."
+        name="keyword"
+        class="input-search"
+        id="searchkeyword"
+      />
+      <button type="submit" class="btn-search" id="btn-search">Suchen</button>
+    </form>
+    <!-- <div class="container" id="bookshelf"></div> -->
+    <div class="container-books" id="container-results"></div>
     <a style="padding: 1rem" href="searchpage.html">Zur Büchersuche</a>
     <a style="padding: 1rem" href="editlibrary.html">Bibliothek bearbeiten</a>
     <div class="overlay"></div>
@@ -34,6 +50,10 @@
         <span id="modal-title">[Titel unbekannt]</span><br />
         <span id="modal-subtitle">-</span><br />
         <span id="modal-published-date">[Jahr unbekannt]</span>
+        <!-- Button nur in container-results anzeigen, value vom container abhängig machen -->
+        <form>
+          <input type="button" class="btn-modal-form" value="Speichern" />
+        </form>
       </div>
     </div>
   </body>
