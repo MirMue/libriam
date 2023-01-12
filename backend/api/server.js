@@ -49,7 +49,7 @@ async function getAllBooks() {
         };
         bookDataArray.push(bookObj);
       },
-      (err, rowNrs) => {
+      (err) => {
         if (err) {
           console.log("Error in getAllBooks, db.each callback 2: ", err);
           reject(err);
@@ -83,7 +83,7 @@ async function getBook(googleBookId) {
           };
           resolve(bookObj);
         } else {
-          resolve(false);
+          resolve(null);
         }
       }
     );
@@ -108,12 +108,15 @@ app.post("/books", async (req, res) => {
       return res.status(400).send({ msg: "doublet" });
     }
 
-    db.serialize(async () => {
+    db.serialize(() => {
       const stmt = db.prepare(
         "INSERT INTO books (googleBookId, authors, title, subtitle, publishedYear, imgLink) VALUES (?, ?, ?, ?, ?, ?)",
         (err) => {
           if (err) {
             console.log("Error in app.post, prepare: ", err);
+            res.status(500).send({ msg: "server failed to save book in DB" });
+          } else {
+            res.status(200).send({ msg: "book successfully saved in DB" });
           }
         }
       );
@@ -128,12 +131,6 @@ app.post("/books", async (req, res) => {
       );
 
       stmt.finalize();
-
-      const isInDB = await getBook(req.body.googleBookId);
-
-      isInDB
-        ? res.status(200).send({ msg: "book successfully saved in DB" })
-        : res.status(500).send({ msg: "server failed to save book in DB" });
     });
   } catch (err) {
     console.log("Error in app.post catch: ", err);
@@ -148,7 +145,12 @@ app.delete("/books/:id", (req, res) => {
         "DELETE FROM books WHERE googleBookId = ?",
         (err) => {
           if (err) {
-            return console.log("Error in app.delete, prepare: ", err);
+            console.log("Error in app.delete, prepare: ", err);
+            res
+              .status(500)
+              .send({ msg: "server failed to delete book from DB" });
+          } else {
+            res.status(200).send({ msg: "book successfully deleted from DB" });
           }
         }
       );
@@ -156,12 +158,6 @@ app.delete("/books/:id", (req, res) => {
       stmt.run(req.params.id);
 
       stmt.finalize();
-
-      const isInDB = await getBook(req.params.id);
-
-      isInDB
-        ? res.status(500).send({ msg: "server failed to delete book from DB" })
-        : res.status(200).send({ msg: "book successfully deleted from DB" });
     });
   } catch (err) {
     console.log("Error in app.delete catch: ", err);
