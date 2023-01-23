@@ -1,3 +1,5 @@
+/* general styles */
+
 body {
   text-align: center;
   font-family: Georgia, "Times New Roman", Times, serif;
@@ -21,44 +23,27 @@ hr {
   border-color: lightgray;
 }
 
-.loader {
+footer {
+  color: gray;
+}
+
+/* container library */
+
+.container-books-library {
   display: flex;
-  height: 26px;
-  justify-content: center;
+  opacity: 1;
+  flex-flow: column wrap;
   align-items: center;
-  padding: 5rem;
+  gap: 10px 20px;
+  padding: 1rem;
+  transition: opacity 1s ease-in;
 }
 
-.loader > span {
-  display: inline-block;
-  background-color: lightgray;
-  width: 0px;
-  height: 0px;
-  border-radius: 50%;
-  margin: 0 10px;
-  animation: pulsate 1s infinite alternate;
-}
+/* container search form */
 
-.loader > span:nth-child(2) {
-  background-color: darkgray;
-  animation-delay: 0.25s;
-}
-
-.loader > span:nth-child(3) {
-  background-color: gray;
-  animation-delay: 0.5s;
-}
-
-@keyframes pulsate {
-  to {
-    width: 25px;
-    height: 25px;
-  }
-}
-
-.container-books {
+.container-books-search {
   display: flex;
-  opacity: 0;
+  opacity: 1;
   flex-flow: row wrap;
   justify-content: center;
   align-items: flex-end;
@@ -68,20 +53,48 @@ hr {
   transition: opacity 1s ease-in;
 }
 
-/* #bookshelf {
+/* book elements large and small */
+
+.container-books-library > .container-book {
+  border: 1px solid gray;
+  width: 80%;
+}
+
+.book-large {
   display: flex;
-  opacity: 0;
   flex-flow: row wrap;
-  justify-content: center;
-  align-items: flex-end;
-  align-content: flex-start;
+  justify-content: space-between;
   gap: 10px 20px;
   padding: 1rem;
-  transition: opacity 1s ease-in;
-} */
+}
 
-.book:hover::before {
-  content: "Mehr...";
+.container-book-info {
+  text-align: left;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  width: 60%;
+  word-wrap: break-word;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.container-book-info > .title {
+  font-size: large;
+}
+
+.nav-book-large {
+  display: flex;
+  flex-flow: column wrap;
+}
+
+.nav-book-large > button {
+  padding: 0.5rem 0.8rem;
+  background-color: goldenrod;
+  font-size: medium;
+  font-family: Georgia, "Times New Roman", Times, serif;
+}
+
+.btn-bookcover:hover::before {
+  content: "speichern...";
   position: absolute;
   background-color: black;
   color: white;
@@ -103,19 +116,12 @@ hr {
   font-size: medium;
 }
 
-.btn-book {
+.btn-bookcover {
   border: none;
   background-color: white;
 }
 
-.btn-modal-form {
-  padding: 0.5rem 0.8rem;
-  background-color: black;
-  color: white;
-  font-size: smaller;
-  font-family: Georgia, "Times New Roman", Times, serif;
-  width: 146px;
-}
+/* form for googleBook search */
 
 .form-main {
   padding: 1rem;
@@ -141,6 +147,8 @@ hr {
   display: none;
   width: 0px;
 }
+
+/* modal and overlay */
 
 .modal {
   position: fixed;
@@ -186,6 +194,15 @@ hr {
   padding: 10px 15px;
 }
 
+.btn-modal-form {
+  padding: 0.5rem 0.8rem;
+  background-color: black;
+  color: white;
+  font-size: smaller;
+  font-family: Georgia, "Times New Roman", Times, serif;
+  width: 146px;
+}
+
 .overlay {
   position: fixed;
   opacity: 0;
@@ -201,4 +218,42 @@ hr {
 .overlay.active {
   opacity: 1;
   pointer-events: all;
+}
+
+/* loading animation */
+
+.loader {
+  display: none;
+  opacity: 0;
+  height: 26px;
+  justify-content: center;
+  align-items: center;
+  padding: 5rem;
+}
+
+.loader > span {
+  display: inline-block;
+  background-color: lightgray;
+  width: 0px;
+  height: 0px;
+  border-radius: 50%;
+  margin: 0 10px;
+  animation: pulsate 1s infinite alternate;
+}
+
+.loader > span:nth-child(2) {
+  background-color: darkgray;
+  animation-delay: 0.25s;
+}
+
+.loader > span:nth-child(3) {
+  background-color: gray;
+  animation-delay: 0.5s;
+}
+
+@keyframes pulsate {
+  to {
+    width: 25px;
+    height: 25px;
+  }
 }

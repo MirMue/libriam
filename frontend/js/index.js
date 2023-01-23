@@ -1,7 +1,9 @@
-initIndex();
+"use strict";
 
-async function initIndex() {
-  const bookData = await getBooks();
-  await fillBookshelf(bookData);
+initIndexpage();
+
+async function initIndexpage() {
+  const bookData = await getAllBooks();
+  await putBooksOnPage(bookData);
   initButtons(bookData);
 }

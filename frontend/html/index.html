@@ -10,22 +10,22 @@
     <script src="../js/libriam.js" defer></script>
     <script src="../js/index.js" defer></script>
     <script src="../js/searchpage.js" defer></script>
+    <script src="../js/editlibrary.js" defer></script>
   </head>
   <body>
     <header>
       <img id="libriam-logo" src="../img/libriam_logo_v3.png" />
     </header>
     <h2>Deine Bibliothek</h2>
-    <div class="loader">
+    <div id="loader-bookshelf" class="loader">
       <span></span>
       <span></span>
       <span></span>
     </div>
-    <!-- <div class="container" id="bookshelf"></div> -->
-    <div class="container-books" id="bookshelf"></div>
+    <div id="container-bookshelf" class="container-books-library"></div>
     <hr />
     <h2 style="color: gray">Büchersuche</h2>
-    <form class="form-main" id="form-search">
+    <form id="form-search-google" class="form-main">
       <input
         type="text"
         placeholder="Titel, Autor, Schlagworte..."
@@ -35,14 +35,30 @@
       />
       <button type="submit" class="btn-search" id="btn-search">Suchen</button>
     </form>
-    <!-- <div class="container" id="bookshelf"></div> -->
-    <div class="container-books" id="container-results"></div>
-    <a style="padding: 1rem" href="searchpage.html">Zur Büchersuche</a>
-    <a style="padding: 1rem" href="editlibrary.html">Bibliothek bearbeiten</a>
+    <div id="loader-search" class="loader">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <div id="container-results" class="container-books-search"></div>
+    <!-- ------------ Modals ---------- -->
     <div class="overlay"></div>
-    <div class="modal">
+    <!-- Modal für Löschen-Button -->
+    <div class="modal" id="modal-delete">
       <div class="modal-header">
-        <div class="modal-title">Buchinfos</div>
+        <div class="modal-title">Dieses Buch wirklich löschen?</div>
+        <button class="btn-modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <input type="button" class="btn-modal-delete" value="Löschen" />
+        </form>
+      </div>
+    </div>
+    <!-- Modaln für Buchinfos und Speicher in Suchformular -->
+    <div class="modal" id="modal-search">
+      <div class="modal-header">
+        <div class="modal-title">Dieses Buch speichern?</div>
         <button class="btn-modal-close">&times;</button>
       </div>
       <div class="modal-body">
@@ -50,11 +66,14 @@
         <span id="modal-title">[Titel unbekannt]</span><br />
         <span id="modal-subtitle">-</span><br />
         <span id="modal-published-date">[Jahr unbekannt]</span>
-        <!-- Button nur in container-results anzeigen, value vom container abhängig machen -->
         <form>
           <input type="button" class="btn-modal-form" value="Speichern" />
         </form>
       </div>
     </div>
+    <hr />
+    <footer>
+      <h4>Libriam is a work in progress ...</h3>
+    </footer>
   </body>
 </html>
