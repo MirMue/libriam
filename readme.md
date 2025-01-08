@@ -1,3 +1,3 @@
-# Libriam - Miriams Bücher
+# Libriam - Miriams Books
 
-Eine simple Website, die Buchinformationen anzeigt.
+A simple website to show book information. A work in progress.
